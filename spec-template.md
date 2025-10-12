@@ -15,7 +15,7 @@ This shows what a well-written spec looks like. Use this as a reference when cre
 ```markdown
 # 20251012: Add User Authentication
 
-> **Otto Protocol**: Before implementing, read `aux/otto.md` for workflow instructions.
+> **Otto Protocol**: See `aux/protocol.md` for workflow and state machine details.
 
 **Status**: In Progress
 
@@ -78,27 +78,9 @@ These MUST be present in every spec:
 
 Success criteria should be concrete and testable, but not overly detailed. Focus on user-facing outcomes and key technical requirements.
 
-**Too vague:**
-- [ ] Users can authenticate
-- [ ] System is faster
+**See `protocol.md` section "Success Criteria Guidelines" (lines 289-314) for detailed examples and best practices.**
 
-**Too detailed:**
-- [ ] Login form has email field with type="email"
-- [ ] Login form has password field with type="password"
-- [ ] Login form has submit button
-- [ ] Submit button is disabled when fields empty
-- [ ] Email validation shows error below field
-- [ ] Password validation shows error below field
-- [ ] Form submits on Enter key
-- [ ] ... (15 more criteria)
-
-**Just right:**
-- [ ] Users can log in with email/password
-- [ ] Invalid credentials show error message
-- [ ] Session persists across page navigations
-- [ ] Password reset email is sent when requested
-
-**Guidelines:**
+**Quick guidelines:**
 - Aim for 3-7 criteria per spec (Small features: 3-4, Medium: 5-7)
 - Focus on what users can do, not how it's implemented
 - Include key technical requirements (security, performance, data integrity)

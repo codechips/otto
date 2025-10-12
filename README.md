@@ -2,6 +2,21 @@
 
 *A lightweight collaboration protocol for humans and AI coding assistants*
 
+## TL;DR
+
+**What is it?** A markdown-based protocol that helps you and your AI align on *what* to build before writing code, so you don't waste time on wrong implementations.
+
+**Quick start:**
+```bash
+cd your-project
+curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh | bash
+```
+
+**Then:** Say "Otto, help me set up project.md" and your AI will guide you through it.
+
+**When to use:** Vague requests ("add auth"), multi-step features (4+ files), breaking changes
+**When to skip:** Obvious fixes, trivial changes, you already know exactly what you want
+
 ## The Problem
 
 You have a vague idea: "add user authentication"
@@ -22,6 +37,43 @@ Otto aligns human intent with AI implementation BEFORE coding begins:
 4. **Validate**: You verify against your original intent
 
 **The spec is the contract** between "what I want" and "what I'll build."
+
+## What Otto IS
+
+- A protocol for one human + one AI to align on intent before coding
+- A structured way to capture "what to build" so AI builds the right thing
+- A record of decisions that survives code changes
+
+## What Otto Is NOT
+
+- **Project management**: Use your PM tool for backlogs/roadmaps
+- **Team task tracking**: Use GitHub Issues/Linear/Jira
+- **API documentation**: Use JSDoc/OpenAPI/README
+
+## Why Otto is Different
+
+No lock-in, maximum flexibility:
+
+- **No complex setup**: Just markdown files in an `aux/` folder - no databases, no servers, no accounts
+- **No CLI tools required**: Works with any AI assistant that can read files (Claude Code, Cursor, GitHub Copilot, etc.)
+- **No lock-in**: Plain markdown means you can read/edit specs with any text editor, migrate to any system
+- **Easy upgrades**: New version? Just download the updated files - no package managers, no breaking changes
+- **Extensible**: Integrate with your tools (add `gh cli` commands, custom scripts, project-specific workflows)
+- **Adaptable**: Modify the protocol to fit your team - add sections, change formats, adjust the workflow
+
+**Your project, your rules.** Otto is a starting point, not a straitjacket.
+
+## Philosophy
+
+**Otto is a collaboration protocol, not a project management system.**
+
+The core insight: AI coding assistants need structured intent to build the right thing. Specs are the interface document between human intent and AI implementation.
+
+**Design principles:**
+- **Lightweight**: Minimal files, no complex tooling
+- **Explicit**: Human approval required at key gates
+- **Intent-focused**: Capture why and what, not just how
+- **Portable**: Specs survive code rewrites, framework migrations, language changes
 
 ## When to Use Otto
 
@@ -50,14 +102,11 @@ curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh | b
 
 This will:
 - Create `aux/` directory structure
-- Download core files (otto.md, protocol.md, spec-template.md)
-- Create `project.md` template for you to customize
-- Show you how to integrate with CLAUDE.md (if detected)
+- Download core files (otto.md, protocol.md, spec-template.md) to `aux/`
+- Create `project.md` template
+- Detect CLAUDE.md or AGENTS.md and offer to append Otto section automatically
 
-**Then:**
-1. Customize `aux/project.md` with your project details
-2. (Optional) Add Otto section to CLAUDE.md if using Claude Code
-3. Say "Otto" to your AI assistant to start
+**Then:** Say "Otto, help me set up project.md" - your AI will ask questions to fill in your project details.
 
 ---
 
@@ -74,6 +123,8 @@ cd aux/
 curl -O https://raw.githubusercontent.com/codechips/otto/main/otto.md
 curl -O https://raw.githubusercontent.com/codechips/otto/main/protocol.md
 curl -O https://raw.githubusercontent.com/codechips/otto/main/spec-template.md
+mkdir -p guides
+curl -o guides/ai-implementation.md https://raw.githubusercontent.com/codechips/otto/main/guides/ai-implementation.md
 cd ..
 
 # 3. Create project.md from template below
@@ -119,6 +170,8 @@ Example:
 
 **Add to CLAUDE.md** (if using Claude Code):
 
+> **Note**: The automated bootstrap script will offer to add this automatically if it detects CLAUDE.md or AGENTS.md.
+
 ```markdown
 <!-- SPEC-PROTOCOL:START -->
 # Otto Protocol
@@ -126,9 +179,10 @@ Example:
 **This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding.
 
 **When user says "Otto":**
-1. Read `aux/otto.md` (entry point with full instructions)
+1. Read `aux/protocol.md` (protocol definition - the contract)
 2. Read `aux/project.md` (project context)
-3. Follow the workflow defined in those files
+3. Follow the state machine and workflow defined in protocol.md
+4. For implementation guidance, see `aux/guides/ai-implementation.md`
 
 **Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
 
@@ -147,18 +201,31 @@ Once set up:
 6. **You validate** and say "mark as done"
 7. **Spec moves to `done/`** for historical reference
 
+## Git Integration
+
+**Branching strategy is a team convention, not a protocol requirement.** Otto doesn't prescribe how you organize branches, commits, or merges.
+
+That said, most teams implement each spec in its own feature branch. This allows you to:
+- Work on multiple specs in parallel
+- Review and merge work independently
+- Keep spec lifecycle aligned with branch lifecycle
+
+Follow your team's existing branching strategy (trunk-based, gitflow, etc.). Otto works with any approach.
+
 ## File Structure
 
 ```
 your-project/
 ├── aux/
-│   ├── otto.md          # Entry point (what is Otto)
-│   ├── protocol.md         # Full workflow docs
-│   ├── spec-template.md    # Format reference
-│   ├── project.md          # Your project context
-│   ├── specs/              # Active work
+│   ├── otto.md              # Entry point (what is Otto)
+│   ├── protocol.md          # Protocol definition (the contract)
+│   ├── project.md           # Your project context
+│   ├── spec-template.md     # Spec format reference
+│   ├── guides/              # Implementation guidance (optional)
+│   │   └── ai-implementation.md
+│   ├── specs/               # Active work
 │   │   └── 20251012-add-user-auth.md
-│   └── done/               # Completed specs
+│   └── done/                # Completed specs
 │       └── 20251011-add-search.md
 └── [your code files]
 ```
@@ -179,6 +246,10 @@ Specs in `done/` are valuable beyond their implementation:
 
 The `project.md` file provides context that helps AI ask better questions and make better decisions. Keep it current.
 
+**Setting up initially:** Say "Otto, help me set up project.md" - AI will guide you through the template with questions.
+
+**Updating later:** Say "Otto, help me update project.md" when patterns change - AI will ask about what's changed.
+
 **When to update:**
 - Introducing a new architectural pattern (e.g., switching from REST to GraphQL)
 - Changing existing patterns (e.g., moving from Context to Zustand for state)
@@ -198,43 +269,6 @@ The `project.md` file provides context that helps AI ask better questions and ma
 - When you make architectural changes, update project.md immediately
 - During monthly reviews, scan Architecture Patterns and remove/update obsolete entries
 - Keep it current or remove it - stale patterns are worse than no patterns
-
-## What Otto Is NOT
-
-- **Project management**: Use your PM tool for backlogs/roadmaps
-- **Team task tracking**: Use GitHub Issues/Linear/Jira
-- **API documentation**: Use JSDoc/OpenAPI/README
-
-## What Otto IS
-
-- A protocol for one human + one AI to align on intent before coding
-- A structured way to capture "what to build" so AI builds the right thing
-- A record of decisions that survives code changes
-
-## Why Otto is Different
-
-**No lock-in, maximum flexibility:**
-
-- **No complex setup**: Just markdown files in an `aux/` folder - no databases, no servers, no accounts
-- **No CLI tools required**: Works with any AI assistant that can read files (Claude Code, Cursor, GitHub Copilot, etc.)
-- **No lock-in**: Plain markdown means you can read/edit specs with any text editor, migrate to any system
-- **Easy upgrades**: New version? Just download the updated files - no package managers, no breaking changes
-- **Extensible**: Integrate with your tools (add `gh cli` commands, custom scripts, project-specific workflows)
-- **Adaptable**: Modify the protocol to fit your team - add sections, change formats, adjust the workflow
-
-**Your project, your rules.** Otto is a starting point, not a straitjacket.
-
-## Philosophy
-
-**Otto is a collaboration protocol, not a project management system.**
-
-The core insight: AI coding assistants need structured intent to build the right thing. Specs are the interface document between human intent and AI implementation.
-
-**Design principles:**
-- **Lightweight**: Minimal files, no complex tooling
-- **Explicit**: Human approval required at key gates
-- **Intent-focused**: Capture why and what, not just how
-- **Portable**: Specs survive code rewrites, framework migrations, language changes
 
 ## Example Spec
 

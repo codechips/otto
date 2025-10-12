@@ -6,10 +6,16 @@
 
 set -e
 
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
 # Check for required commands
 for cmd in curl mkdir cat; do
     if ! command -v "$cmd" &> /dev/null; then
-        echo "❌ Error: Required command '$cmd' not found"
+        echo -e "${RED}❌ Error: Required command '$cmd' not found${NC}"
         exit 1
     fi
 done
@@ -21,21 +27,51 @@ echo "🔍 Otto Bootstrap"
 echo "===================="
 echo ""
 
+# Check if aux/ already exists
+if [ -d "aux" ] && [ -f "aux/protocol.md" ]; then
+    echo -e "${YELLOW}⚠️  Warning: aux/ directory with Otto files already exists${NC}"
+    read -p "Do you want to re-download and overwrite? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborted. No changes made."
+        exit 0
+    fi
+fi
+
 # Create directory structure
 echo "📁 Creating aux/ directory structure..."
-mkdir -p aux/specs aux/done
+mkdir -p aux/specs aux/done aux/guides
 
-# Download core files
-echo "⬇️  Downloading Otto files..."
+# Download core protocol files to aux/
+echo "⬇️  Downloading Otto protocol files..."
 
-curl -sSL "${BASE_URL}/otto.md" -o aux/otto.md
-echo "   ✓ otto.md"
+if curl -sSL "${BASE_URL}/otto.md" -o aux/otto.md; then
+    echo "   ✓ otto.md"
+else
+    echo -e "${RED}   ✗ Failed to download otto.md${NC}"
+    exit 1
+fi
 
-curl -sSL "${BASE_URL}/protocol.md" -o aux/protocol.md
-echo "   ✓ protocol.md"
+if curl -sSL "${BASE_URL}/protocol.md" -o aux/protocol.md; then
+    echo "   ✓ protocol.md"
+else
+    echo -e "${RED}   ✗ Failed to download protocol.md${NC}"
+    exit 1
+fi
 
-curl -sSL "${BASE_URL}/spec-template.md" -o aux/spec-template.md
-echo "   ✓ spec-template.md"
+if curl -sSL "${BASE_URL}/spec-template.md" -o aux/spec-template.md; then
+    echo "   ✓ spec-template.md"
+else
+    echo -e "${RED}   ✗ Failed to download spec-template.md${NC}"
+    exit 1
+fi
+
+if curl -sSL "${BASE_URL}/guides/ai-implementation.md" -o aux/guides/ai-implementation.md; then
+    echo "   ✓ guides/ai-implementation.md"
+else
+    echo -e "${RED}   ✗ Failed to download guides/ai-implementation.md${NC}"
+    exit 1
+fi
 
 # Check if project.md exists
 if [ -f "aux/project.md" ]; then
@@ -71,67 +107,87 @@ Example:
 [Things that never get compromised]
 EOF
     echo "   ✓ project.md (template created - please customize)"
+    echo ""
+    echo -e "${YELLOW}   ⚠️  IMPORTANT: The placeholder template won't provide useful context.${NC}"
+    echo -e "${YELLOW}      Say 'Otto, help me set up project.md' to fill it in properly.${NC}"
 fi
+
+# Function to append Otto section to AI config file
+append_otto_section() {
+    local config_file="$1"
+    local config_name="$2"
+
+    # Check if Otto section already exists
+    if grep -q "SPEC-PROTOCOL:START" "$config_file" 2>/dev/null; then
+        echo -e "${YELLOW}   ⚠️  Otto section already exists in $config_name, skipping${NC}"
+        return 0
+    fi
+
+    echo ""
+    echo -e "${GREEN}📌 $config_name detected!${NC}"
+    echo ""
+    read -p "Would you like to append the Otto Protocol section to $config_name? (Y/n): " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+        echo "   Skipped. You can manually add the Otto section later."
+        return 0
+    fi
+
+    # Append Otto section
+    cat >> "$config_file" << 'EOF'
+
+<!-- SPEC-PROTOCOL:START -->
+# Otto Protocol
+
+**This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding.
+
+**When user says "Otto":**
+1. Read `aux/protocol.md` (protocol definition - the contract)
+2. Read `aux/project.md` (project context)
+3. Follow the state machine and workflow defined in protocol.md
+4. For implementation guidance, see `aux/guides/ai-implementation.md`
+
+**Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
+
+<!-- SPEC-PROTOCOL:END -->
+EOF
+
+    echo -e "${GREEN}   ✓ Otto section added to $config_name${NC}"
+}
 
 # Check for AI assistant config files
 AI_CONFIG_DETECTED=false
 
 if [ -f "CLAUDE.md" ]; then
     AI_CONFIG_DETECTED=true
-    echo ""
-    echo "📌 CLAUDE.md detected!"
-    echo ""
-    echo "Add this to your CLAUDE.md to enable Otto:"
-    echo ""
-    echo "<!-- SPEC-PROTOCOL:START -->"
-    echo "# Otto Protocol"
-    echo ""
-    echo "**This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding."
-    echo ""
-    echo "**When user says \"Otto\":**"
-    echo "1. Read \`aux/otto.md\` (entry point with full instructions)"
-    echo "2. Read \`aux/project.md\` (project context)"
-    echo "3. Follow the workflow defined in those files"
-    echo ""
-    echo "**Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features."
-    echo ""
-    echo "<!-- SPEC-PROTOCOL:END -->"
-    echo ""
+    append_otto_section "CLAUDE.md" "CLAUDE.md"
 fi
 
 if [ -f "AGENTS.md" ]; then
     AI_CONFIG_DETECTED=true
-    echo ""
-    echo "📌 AGENTS.md detected!"
-    echo ""
-    echo "Add this to your AGENTS.md to enable Otto:"
-    echo ""
-    echo "<!-- SPEC-PROTOCOL:START -->"
-    echo "# Otto Protocol"
-    echo ""
-    echo "**This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding."
-    echo ""
-    echo "**When user says \"Otto\":**"
-    echo "1. Read \`aux/otto.md\` (entry point with full instructions)"
-    echo "2. Read \`aux/project.md\` (project context)"
-    echo "3. Follow the workflow defined in those files"
-    echo ""
-    echo "**Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features."
-    echo ""
-    echo "<!-- SPEC-PROTOCOL:END -->"
-    echo ""
+    append_otto_section "AGENTS.md" "AGENTS.md"
 fi
 
 echo ""
-echo "✅ Otto bootstrap complete!"
+echo -e "${GREEN}✅ Otto bootstrap complete!${NC}"
 echo ""
 echo "Next steps:"
-echo "1. Customize aux/project.md with your project details"
 if [ "$AI_CONFIG_DETECTED" = true ]; then
-    echo "2. Add the Otto Protocol section to your AI config file (see above)"
-    echo "3. Say 'Otto' to your AI assistant to start using the protocol"
+    echo -e "${YELLOW}⚠️  IMPORTANT: Set up project.md before using Otto!${NC}"
+    echo "   Say: 'Otto, help me set up project.md' - your AI will guide you"
+    echo ""
+    echo "Then start using Otto for your features by saying 'Otto'"
 else
-    echo "2. Say 'Otto' to your AI assistant to start using the protocol"
+    echo -e "${YELLOW}⚠️  Manual step required:${NC} Add Otto Protocol section to your AI config file"
+    echo "   (CLAUDE.md, AGENTS.md, .cursorrules, etc.)"
+    echo "   See README.md for the section to add."
+    echo ""
+    echo -e "${YELLOW}⚠️  IMPORTANT: Set up project.md before using Otto!${NC}"
+    echo "   Say: 'Otto, help me set up project.md' - your AI will guide you"
+    echo ""
+    echo "Then start using Otto for your features by saying 'Otto'"
 fi
 echo ""
 echo "Documentation: https://github.com/codechips/otto"
+echo ""

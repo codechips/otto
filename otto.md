@@ -76,7 +76,7 @@ All variations work the same way.
 
 ## What Happens When Invoked
 
-1. **AI re-reads this file** (silent, automatic re-priming)
+1. **AI reads protocol.md** (understands the contract)
 2. **AI enters Planning Mode** and reads `project.md` for context
 3. **AI asks questions** to extract intent, constraints, scope
 4. **Human explicitly requests spec creation** ("create a spec for this")
@@ -85,6 +85,8 @@ All variations work the same way.
 7. **AI implements** according to spec
 8. **Human validates and says "mark as done"**
 9. **AI moves spec** to `done/` folder
+
+See `protocol.md` for complete state machine and workflow details.
 
 ## When to Use Otto
 
@@ -103,25 +105,30 @@ All variations work the same way.
 
 ```
 aux/
-├── otto.md          ← You are here (entry point)
-├── protocol.md         ← Full rules (read when confused/stuck)
-├── project.md          ← Product reference (what we're building)
-├── spec-template.md    ← Format reference (how to write specs)
-├── specs/              ← Active work (YYYYMMDD-feature-name.md)
-└── done/               ← Completed specs (archived for history)
+├── otto.md              ← Human-facing overview (what Otto is, when to use)
+├── protocol.md          ← Protocol definition (the contract - AI starts here)
+├── project.md           ← Project-specific context
+├── spec-template.md     ← Spec format reference
+├── guides/              ← Implementation guidance (optional)
+│   └── ai-implementation.md
+├── specs/               ← Active work (YYYYMMDD-feature-name.md)
+└── done/                ← Completed specs (archived for history)
 ```
 
-## Reading Strategy for AI
+## Reading Path for AI
 
-```
-"Otto" trigger → Read otto.md (always, silently)
-                 ↓
-         Planning mode → Read project.md
-                 ↓
-         Creating spec → Read spec-template.md
-                 ↓
-         Confused/stuck → Read protocol.md
-```
+**When human says "Otto", AI should:**
+
+1. **Read `aux/protocol.md`** - Understand the state machine, human signals, and required deliverables
+2. **Read `aux/project.md`** - Get project context for Planning mode
+3. **Enter [Planning] state** and begin asking questions
+
+**Later in the workflow:**
+- Before creating spec → Read `aux/spec-template.md` (format reference)
+- During implementation → Re-read the active spec file when needed
+- If stuck on implementation → Read `aux/guides/ai-implementation.md` (strategies)
+
+**Note**: This file (otto.md) is for human understanding. AI assistants should go directly to protocol.md when invoked.
 
 ## Key Principles
 
