@@ -1,147 +1,145 @@
-# Otto Framework
+# Otto Protocol
 
-A collaboration protocol for humans and AI coding assistants.
-
-## What Otto Is
-
-Otto is a protocol that helps humans and AI align on intent before writing code.
-
-**The problem it solves:**
-- Human has vague idea: "add user authentication"
-- AI implements based on assumptions
-- Result doesn't match intent
-- Wasted time, wrong implementation
-
-**How Otto fixes this:**
-1. **Extract**: AI asks questions to pull intent from human
-2. **Capture**: Intent gets written in a spec (structured format)
-3. **Implement**: AI uses spec as blueprint, not assumptions
-4. **Validate**: Human checks against original intent
-
-**The spec is the contract:**
-- Human side: "Here's what I want and why"
-- AI side: "Here's what I'll build and how we'll know it's done"
-
-**Why specs are kept:**
-- AI can reference past decisions ("How did we handle X before?")
-- Human can remember original intent ("Why did we build this?")
-- Framework migrations preserve intent when code changes
-
-**This is NOT:**
-- Project management (use your PM tool for backlogs/roadmaps)
-- Team task tracking (use GitHub Issues/Linear/Jira)
-- API documentation (use JSDoc/OpenAPI/README)
-
-**This IS:**
-- A protocol for one human + one AI to align on intent before coding
-- A structured way to capture "what to build" so AI builds the right thing
-- A record of decisions that survives code changes
-
-## Do You Need Otto for This?
-
-**Quick check:**
-- Single file change? → Skip Otto, just do it
-- Know exactly what you want? → Skip Otto, just do it
-- Vague idea that needs thinking? → Use Otto
-- Multi-file or unclear scope? → Use Otto
-
-**Examples that DON'T need Otto:**
-- Fix typo in button text
-- Update color value in CSS
-- Add console.log for debugging
-- Restore intended behavior (obvious bug)
-
-**Examples that DO need Otto:**
-- "Add search" (unclear: client-side? server? static index?)
-- "Make it faster" (vague: what's slow? what's the target?)
-- "Improve UX" (needs definition: which flow? what's wrong?)
-- "Add authentication" (multi-step: sessions? JWT? OAuth?)
-
-**Rule of thumb:** If you spend more time deciding whether to use Otto than the task would take, just do the task.
+*Align on intent before coding*
 
 ---
 
-## Invocation
+## What This Is
 
-Say **"Otto"** to activate this framework. This signals: "We're entering planning mode."
+Otto prevents AI from implementing based on assumptions.
 
-**Recognized phrases:**
-- "Otto" or "otto" (case-insensitive)
-- "use Otto"
-- "Otto mode"
-- "Otto this" (applies to current discussion)
-- "Otto: [intent]" (e.g., "Otto: add user authentication")
+**Without Otto:**
+- You: "add user authentication"
+- AI: implements based on guesses
+- Result: doesn't match your intent
 
-All variations work the same way.
+**With Otto:**
+- You: "Otto: add user authentication"
+- AI: asks questions to extract your intent
+- AI: writes spec capturing what you want
+- You: approve spec
+- AI: implements from spec, not assumptions
 
-## What Happens When Invoked
+**The spec is your contract.** Intent captured in writing, survives code changes.
 
-1. **AI reads protocol.md** (understands the contract)
-2. **AI enters Planning Mode** and reads `project.md` for context
-3. **AI asks questions** to extract intent, constraints, scope
-4. **Human explicitly requests spec creation** ("create a spec for this")
-5. **AI creates spec** in `specs/YYYYMMDD-feature-name.md` with date-based ID
-6. **Human approves spec**
-7. **AI implements** according to spec
-8. **Human validates and says "mark as done"**
-9. **AI moves spec** to `done/` folder
+---
 
-See `protocol.md` for complete state machine and workflow details.
+## When to Use
 
-## When to Use Otto
+**Use Otto when:**
+- Scope unclear: "add search" (client? server? static?)
+- Request vague: "make it faster" (what's slow? target?)
+- Multi-step work: 4+ files or breaking changes
 
-**Use when:**
-- Planning features (you say: "let's build", "add feature", "implement")
-- Unclear scope (you say: "I want to", "can we", "how about")
-- Breaking changes or refactoring
-- Multi-step work
+**Skip Otto when:**
+- Single file, obvious fix
+- You know exactly what you want
+- Task is trivial (typo, console.log)
 
-**Skip when:**
-- Trivial fixes (typos, formatting)
-- Obvious bugs (restore intended behavior)
-- Quick experiments
+**Rule:** If deciding takes longer than doing, just do it.
+
+---
+
+## Setup
+
+### Install
+
+```bash
+cd your-project
+curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh | bash
+```
+
+This creates `aux/` with Otto files and offers to configure your CLAUDE.md or AGENTS.md.
+
+### Configure
+
+Say: **"Otto, help me set up project.md"** (or "Otto help me setup project")
+
+Your AI will ask questions to fill in:
+- What your project is
+- Technical stack and patterns
+- Architectural constraints
+
+This gives AI context for better questions during planning.
+
+---
+
+## Maintenance
+
+**Update project.md when:**
+- Architecture patterns change (REST → GraphQL)
+- New constraints added ("must support offline")
+- AI repeatedly makes wrong assumptions
+
+**How:** Say **"Otto, help me update project.md"** (or "Otto update project")
+
+Stale patterns are worse than no patterns. Keep current or remove.
+
+---
+
+## How It Works
+
+1. Say **"Otto"** to enter Planning Mode
+2. AI asks questions, you answer
+3. Say **"create spec"** when ready
+4. AI writes spec to `aux/specs/YYYYMMDD-feature-name.md`
+5. You approve → AI implements
+6. You validate → say **"mark as done"**
+7. Spec moves to `aux/done/` for history
+
+---
 
 ## File Structure
 
 ```
 aux/
-├── otto.md              ← Human-facing overview (what Otto is, when to use)
-├── protocol.md          ← Protocol definition (the contract - AI starts here)
-├── project.md           ← Project-specific context
+├── otto.md              ← You are here (human reference)
+├── protocol.md          ← The contract (AI reads this)
+├── project.md           ← Your project context
 ├── spec-template.md     ← Spec format reference
-├── guides/              ← Implementation guidance (optional)
+├── guides/
 │   └── ai-implementation.md
-├── specs/               ← Active work (YYYYMMDD-feature-name.md)
-└── done/                ← Completed specs (archived for history)
+├── specs/               ← Active work
+└── done/                ← Completed specs
 ```
 
-## Reading Path for AI
+---
 
-**When human says "Otto", AI should:**
+## For AI Assistants
 
-1. **Read `aux/protocol.md`** - Understand the state machine, human signals, and required deliverables
-2. **Read `aux/project.md`** - Get project context for Planning mode
-3. **Enter [Planning] state** and begin asking questions
+When human says "Otto":
+1. Read `aux/protocol.md` (the contract)
+2. Read `aux/project.md` (project context)
+3. Follow the state machine
 
-**Later in the workflow:**
-- Before creating spec → Read `aux/spec-template.md` (format reference)
-- During implementation → Re-read the active spec file when needed
-- If stuck on implementation → Read `aux/guides/ai-implementation.md` (strategies)
+**This file is for humans.** Go to protocol.md for your instructions.
 
-**Note**: This file (otto.md) is for human understanding. AI assistants should go directly to protocol.md when invoked.
+---
 
-## Key Principles
+## What Otto Is
 
-- **Explicit over implicit**: Human explicitly requests spec creation
-- **Questions before code**: Extract intent through questions, never assume
-- **Human validation gates**: AI never marks work done without explicit approval
-- **Scope control**: If work is Large (8+ files, multiple features), stop and propose splitting
-- **Keep history**: All specs (active and done) are preserved
+- Protocol for human + AI to align on intent before coding
+- Structured way to capture "what to build"
+- Record of decisions that survives code changes
 
-## Quick Reference
+## What Otto Is NOT
 
-- **Planning Mode**: Ask questions to extract intent, constraints, scope
-- **Spec Format**: Date-based ID (YYYYMMDD), lowercase, kebab-case
-- **Success Criteria**: Concrete, testable checkpoints that define "done"
-- **Failure Handling**: Stop, explain blocker, propose 2-3 options, ask human to choose
-- **Done Confirmation**: Explicitly ask: "Should I mark this as done and move spec to done/?"
+- Project management (use your PM tool)
+- Team task tracking (use Issues/Jira)
+- API documentation (use JSDoc/OpenAPI)
+
+---
+
+## Why Keep Completed Specs
+
+Specs in `done/` preserve intent:
+- Framework migrations: code changes, intent doesn't
+- Context recovery: remember why features exist
+- Onboarding: understand decisions without reading code
+- Pattern reference: how did we approach X?
+
+Specs capture planning intent, not final implementation. Implementation reveals edge cases. This is expected.
+
+---
+
+**See protocol.md for complete state machine and workflow details.**
