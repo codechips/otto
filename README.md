@@ -230,6 +230,19 @@ your-project/
 └── [your code files]
 ```
 
+### Essential Files Reference
+
+| File | Audience | Purpose |
+|------|----------|---------|
+| **otto.md** | Humans | Quick reference guide with setup instructions and usage patterns |
+| **protocol.md** | AI & Humans | The core contract defining states, signals, and workflow rules |
+| **project.md** | AI & Humans | Project-specific context (stack, patterns, constraints) |
+| **spec-template.md** | AI & Humans | Format reference and examples for creating specs |
+| **guides/ai-implementation.md** | AI Systems | Instructions for AI assistants implementing Otto (memory management, error handling, tools). Also useful for developers building custom AI tools. |
+| **bootstrap.sh** | Humans | Automated setup script for installing Otto in any project |
+| **specs/*.md** | AI & Humans | Active feature specs (work in progress) |
+| **done/*.md** | AI & Humans | Completed specs (historical reference) |
+
 ## Why Keep Completed Specs?
 
 Specs in `done/` are valuable beyond their implementation:

@@ -29,12 +29,12 @@ Many AI assistants have limited working memory and may lose context during long 
 These are NON-NEGOTIABLE. Always re-read these files at the specified times:
 
 1. **On "Otto" signal:**
-   - Read `protocol.md` (understand the contract)
-   - Read `project.md` (get project context)
+   - Read `aux/protocol.md` (understand the contract)
+   - Read `aux/project.md` (get project context)
    - Then enter [Planning] state
 
 2. **Before creating spec:**
-   - Re-read `spec-template.md` (format reference)
+   - Re-read `aux/spec-template.md` (format reference)
 
 3. **Before implementing:**
    - Re-read the active spec file from `aux/specs/`
@@ -46,8 +46,8 @@ These are NON-NEGOTIABLE. Always re-read these files at the specified times:
    - Re-read the active spec file (confirm what needs validation)
 
 **Optional re-reads (when uncertain):**
-- `protocol.md`: When you forget workflow rules or state transitions
-- `project.md`: When you need to reference architectural patterns
+- `aux/protocol.md`: When you forget workflow rules or state transitions
+- `aux/project.md`: When you need to reference architectural patterns
 - Active spec: Anytime you're unsure about requirements
 
 **How to re-read:**
@@ -56,26 +56,11 @@ These are NON-NEGOTIABLE. Always re-read these files at the specified times:
 - Focus on the section relevant to your current state
 - Better to re-read unnecessarily than to lose critical context
 
-### Strategy: Checkpoint Pattern
-
-At critical transitions, confirm you have necessary context:
-
-```
-Before entering Planning:
-  ✓ Have I read project.md for project context?
-
-Before creating spec:
-  ✓ Have I read spec-template.md for format?
-  ✓ Do I understand the intent from Q&A?
-
-Before implementing:
-  ✓ Have I read the spec I'm implementing?
-  ✓ Do I understand all success criteria?
-
-Before requesting validation:
-  ✓ Have all success criteria been addressed?
-  ✓ Have tests been written (if specified)?
-```
+**Quick checkpoint** - Confirm you have context before proceeding:
+- Before Planning: Read aux/project.md ✓
+- Before creating spec: Read aux/spec-template.md, understand intent from Q&A ✓
+- Before implementing: Read the spec, understand all success criteria ✓
+- Before requesting validation: All success criteria addressed, tests written (if specified) ✓
 
 ---
 
@@ -233,35 +218,18 @@ Examples:
 
 **Memory management:**
 - Claude Code has limited working memory
-- Re-read files at state transitions
+- Re-read files at state transitions (see Memory Management section)
 - Use TodoWrite to track implementation progress
 
-**Workflow:**
-```
-"Otto" → Read otto.md, Read project.md → Enter Planning
-"create spec" → Read spec-template.md → Create spec
-Approved → Read spec → Implement with TodoWrite tracking
-Complete → Request validation
-"mark as done" → Bash mv to move spec
-```
+### Other AI Systems
 
-### Cursor / Other IDEs
-
-**Adaptation:**
-- Use your IDE's file operations
-- Use your task tracking system (if available)
-- Follow the same state machine
-- Re-read files as needed for context
-
-### Custom AI Systems
-
-**Requirements:**
+**Minimum requirements:**
 - File reading capability
 - File writing capability
 - File moving/renaming capability (or equivalent)
 
-**Optional but helpful:**
-- Task tracking system
+**Recommended:**
+- Task tracking system (helps maintain context during Implementation)
 - Codebase search capability
 - Test execution capability
 
@@ -356,6 +324,98 @@ AI: *continues implementation with accurate context*
 
 ---
 
+## Error Handling
+
+### File Operation Failures
+
+**If you cannot write spec file:**
+1. Report the error to human with specific details
+2. Ask if they want to retry or choose different location
+3. Do not proceed to Implementation without a written spec
+
+**If you cannot move spec to done/:**
+1. Report the error clearly
+2. Ask human to verify aux/done/ directory exists
+3. Offer to create the directory if missing
+4. Do not mark task as complete until spec is moved
+
+**If you cannot read required files (protocol.md, project.md, spec):**
+1. Stop immediately
+2. Report which file is missing and where you expected it
+3. Ask human to verify file exists at that path
+4. Do not guess or make assumptions about missing content
+
+### Concurrent Specs
+
+**If multiple specs exist in aux/specs/:**
+1. List all active specs with their filenames
+2. Ask human: "Which spec should I work on?"
+3. Wait for explicit selection
+4. Do not assume the most recent spec is the active one
+
+**If you enter Planning while another spec is active:**
+1. Inform human: "There's already an active spec: YYYYMMDD-feature-name.md"
+2. Ask: "Should I continue with that spec, or start a new one?"
+3. Wait for decision
+
+### Session Recovery
+
+**If you lose context mid-session:**
+1. Check for active specs in aux/specs/
+2. If found, inform human: "I found an active spec: YYYYMMDD-feature-name.md"
+3. Ask: "Should I continue working on this, or start fresh?"
+4. If continuing: Re-read the spec and ask for status update
+
+**If unsure what state you're in:**
+1. Ask human directly: "What would you like me to do?"
+2. Let them guide you back to correct state
+3. Re-read relevant files once state is clear
+
+### Human Override Patterns
+
+**If human says "skip Otto" or "never mind" during Planning:**
+1. Acknowledge: "Exiting Planning Mode"
+2. Return to Idle state
+3. Do not create a spec
+
+**If human says "abandon this spec" during Implementation:**
+1. Ask: "Should I delete the spec file, or leave it in aux/specs/ for later?"
+2. Follow their instruction
+3. Return to Idle state
+
+**If human modifies spec file directly during Implementation:**
+1. Re-read the spec to get updated requirements
+2. Acknowledge changes: "I see the spec was updated. Continuing with new requirements."
+3. Adjust implementation accordingly
+
+---
+
+## Integration with Global Rules
+
+If you operate with global rules (e.g., Claude Code's CLAUDE.md):
+
+**Precedence:**
+1. Otto protocol rules (state machine, gates, deliverables)
+2. Global rules (code style, testing requirements, commit practices)
+3. This implementation guide (strategies, not requirements)
+
+**Example conflict resolution:**
+```
+Global rule: "Always write tests"
+Otto spec: No Testing Approach specified
+Resolution: Follow global rule, write tests anyway
+```
+
+```
+Global rule: "Commit frequently"
+Otto protocol: Human hasn't approved spec yet
+Resolution: Follow Otto protocol, wait for approval
+```
+
+Otto adds a **planning layer** on top of existing practices. It doesn't replace code quality, testing, or version control practices.
+
+---
+
 ## Advanced Patterns
 
 ### Pattern: Nested Otto Sessions
@@ -414,67 +474,6 @@ Don't try to ask everything in one turn. Let human's answers guide your question
 
 ---
 
-## Debugging Your Implementation
-
-### If you're stuck in Planning
-
-**Check:**
-- Have I read `project.md`?
-- Am I asking product questions before technical questions?
-- Am I waiting for answers before moving on?
-- Have I assessed scope?
-
-### If specs aren't working
-
-**Check:**
-- Am I following format in `spec-template.md`?
-- Do I have all mandatory sections?
-- Are success criteria concrete and testable (3-7 items)?
-- Am I waiting for approval before implementing?
-
-### If implementation is failing
-
-**Check:**
-- Have I re-read the spec recently?
-- Am I addressing all success criteria?
-- Am I staying within spec scope?
-- Did I stop when blocked (not push through)?
-
-### If validation is confusing
-
-**Check:**
-- Did I wait for explicit "mark as done" signal?
-- Did I request validation (not assume it)?
-- Am I ready to iterate if human requests changes?
-
----
-
-## Integration with Global Rules
-
-If you operate with global rules (e.g., Claude Code's CLAUDE.md):
-
-**Precedence:**
-1. Otto protocol rules (state machine, gates, deliverables)
-2. Global rules (code style, testing requirements, commit practices)
-3. This implementation guide (strategies, not requirements)
-
-**Example conflict resolution:**
-```
-Global rule: "Always write tests"
-Otto spec: No Testing Approach specified
-Resolution: Follow global rule, write tests anyway
-```
-
-```
-Global rule: "Commit frequently"
-Otto protocol: Human hasn't approved spec yet
-Resolution: Follow Otto protocol, wait for approval
-```
-
-Otto adds a **planning layer** on top of existing practices. It doesn't replace code quality, testing, or version control practices.
-
----
-
 ## Summary
 
 **Core implementation strategy:**
@@ -490,7 +489,7 @@ Otto adds a **planning layer** on top of existing practices. It doesn't replace 
 - Adapt these strategies to your specific capabilities
 
 **When in doubt:**
-- Re-read `protocol.md` for workflow rules
+- Re-read `aux/protocol.md` for workflow rules
 - Stop and ask human for clarification
 - Better to ask than assume
 
