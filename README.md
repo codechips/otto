@@ -9,7 +9,8 @@
 **Quick start:**
 ```bash
 cd your-project
-curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh | bash
+curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh -o bootstrap.sh
+chmod +x bootstrap.sh && ./bootstrap.sh
 ```
 
 **Then:** Say "Otto, help me set up project.md" and your AI will guide you through it.
@@ -99,10 +100,12 @@ The core insight: AI coding assistants need structured intent to build the right
 
 ### Automated Setup (Recommended)
 
-Run this one-liner in your project root:
+Run these commands in your project root:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh | bash
+curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh -o bootstrap.sh
+chmod +x bootstrap.sh
+./bootstrap.sh
 ```
 
 This will:
