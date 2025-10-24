@@ -3,6 +3,10 @@
 # Otto Bootstrap Script
 # Downloads Otto files and sets up the directory structure
 # Works on macOS and Linux
+#
+# Usage:
+#   ./bootstrap.sh          # Install Otto
+#   ./bootstrap.sh --remove # Remove Otto completely
 
 set -e
 
@@ -22,6 +26,127 @@ done
 
 OTTO_VERSION="main"
 BASE_URL="https://raw.githubusercontent.com/codechips/otto/${OTTO_VERSION}"
+
+# Function to remove Otto section from config files
+remove_otto_section() {
+    local config_file="$1"
+    local config_name="$2"
+
+    if [ ! -f "$config_file" ]; then
+        return 0
+    fi
+
+    if ! grep -q "SPEC-PROTOCOL:START" "$config_file" 2>/dev/null; then
+        return 0
+    fi
+
+    echo "   Removing Otto section from $config_name..."
+
+    # Create temp file without Otto section
+    sed '/<!-- SPEC-PROTOCOL:START -->/,/<!-- SPEC-PROTOCOL:END -->/d' "$config_file" > "${config_file}.tmp"
+    mv "${config_file}.tmp" "$config_file"
+
+    echo -e "${GREEN}   ✓ Removed Otto section from $config_name${NC}"
+}
+
+# Function to remove all Otto files and references
+remove_otto() {
+    echo "🗑️  Otto Removal"
+    echo "===================="
+    echo ""
+    echo -e "${YELLOW}This will remove ALL Otto files and references from this repository:${NC}"
+    echo "  - aux/ directory (all specs, protocol files)"
+    echo "  - protocol/ directory (modular protocol files)"
+    echo "  - .claude/commands/otto.md (slash command)"
+    echo "  - Otto sections from CLAUDE.md and AGENTS.md"
+    echo ""
+    echo -e "${RED}⚠️  WARNING: This action cannot be undone!${NC}"
+    echo -e "${RED}⚠️  All specs in aux/specs/ and aux/done/ will be deleted!${NC}"
+    echo ""
+    read -p "Are you sure you want to remove Otto? (type 'yes' to confirm): " -r
+    echo
+
+    if [[ ! $REPLY == "yes" ]]; then
+        echo "Aborted. No changes made."
+        exit 0
+    fi
+
+    echo ""
+    echo "Removing Otto files..."
+
+    # Remove directories
+    if [ -d "aux" ]; then
+        rm -rf aux
+        echo -e "${GREEN}   ✓ Removed aux/ directory${NC}"
+    else
+        echo "   ⊘ aux/ directory not found (skipped)"
+    fi
+
+    if [ -d "protocol" ]; then
+        rm -rf protocol
+        echo -e "${GREEN}   ✓ Removed protocol/ directory${NC}"
+    else
+        echo "   ⊘ protocol/ directory not found (skipped)"
+    fi
+
+    # Remove slash command
+    if [ -f ".claude/commands/otto.md" ]; then
+        rm -f ".claude/commands/otto.md"
+        echo -e "${GREEN}   ✓ Removed .claude/commands/otto.md${NC}"
+
+        # Remove .claude/commands directory if empty
+        if [ -d ".claude/commands" ] && [ -z "$(ls -A .claude/commands)" ]; then
+            rmdir .claude/commands
+            echo -e "${GREEN}   ✓ Removed empty .claude/commands/ directory${NC}"
+        fi
+
+        # Remove .claude directory if empty
+        if [ -d ".claude" ] && [ -z "$(ls -A .claude)" ]; then
+            rmdir .claude
+            echo -e "${GREEN}   ✓ Removed empty .claude/ directory${NC}"
+        fi
+    else
+        echo "   ⊘ .claude/commands/otto.md not found (skipped)"
+    fi
+
+    # Remove Otto sections from config files
+    echo ""
+    echo "Removing Otto references from config files..."
+
+    remove_otto_section "CLAUDE.md" "CLAUDE.md"
+    remove_otto_section "AGENTS.md" "AGENTS.md"
+
+    echo ""
+    echo -e "${GREEN}✅ Otto has been completely removed from this repository${NC}"
+    echo ""
+    echo "All Otto files and references have been deleted."
+    echo ""
+
+    exit 0
+}
+
+# Check for flags
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    echo "Otto Bootstrap Script"
+    echo ""
+    echo "Usage:"
+    echo "  ./bootstrap.sh          Install Otto protocol in current project"
+    echo "  ./bootstrap.sh --remove Completely remove Otto from current project"
+    echo "  ./bootstrap.sh --help   Show this help message"
+    echo ""
+    echo "Installation creates:"
+    echo "  - aux/ directory (specs, project.md, protocol files)"
+    echo "  - protocol/ directory (modular protocol files)"
+    echo "  - .claude/commands/otto.md (optional slash command)"
+    echo ""
+    echo "Removal deletes all Otto files and references from CLAUDE.md/AGENTS.md"
+    echo ""
+    exit 0
+fi
+
+if [ "$1" == "--remove" ]; then
+    remove_otto
+fi
 
 echo "🔍 Otto Bootstrap"
 echo "===================="
