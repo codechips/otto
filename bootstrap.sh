@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 # Check for required commands
 for cmd in curl mkdir cat; do
     if ! command -v "$cmd" &> /dev/null; then
-        echo -e "${RED}❌ Error: Required command '$cmd' not found${NC}"
+        echo -e "${RED}Error: Required command '$cmd' not found${NC}"
         exit 1
     fi
 done
@@ -46,12 +46,12 @@ remove_otto_section() {
     sed '/<!-- SPEC-PROTOCOL:START -->/,/<!-- SPEC-PROTOCOL:END -->/d' "$config_file" > "${config_file}.tmp"
     mv "${config_file}.tmp" "$config_file"
 
-    echo -e "${GREEN}   ✓ Removed Otto section from $config_name${NC}"
+    echo -e "${GREEN}   Removed Otto section from $config_name${NC}"
 }
 
 # Function to remove all Otto files and references
 remove_otto() {
-    echo "🗑️  Otto Removal"
+    echo "Otto Removal"
     echo "===================="
     echo ""
     echo -e "${YELLOW}This will remove ALL Otto files and references from this repository:${NC}"
@@ -59,10 +59,10 @@ remove_otto() {
     echo "  - .claude/commands/otto.md (slash command)"
     echo "  - Otto sections from CLAUDE.md and AGENTS.md"
     echo ""
-    echo -e "${RED}⚠️  WARNING: This action cannot be undone!${NC}"
-    echo -e "${RED}⚠️  All specs in aux/specs/ and aux/done/ will be deleted!${NC}"
+    echo -e "${RED}WARNING: This action cannot be undone!${NC}"
+    echo -e "${RED}All specs in aux/specs/ and aux/done/ will be deleted!${NC}"
     echo ""
-    read -p "Are you sure you want to remove Otto? (type 'yes' to confirm): " -r
+    read -p "Are you sure you want to remove Otto? (type 'yes' to confirm): " -r < /dev/tty
     echo
 
     if [[ ! $REPLY == "yes" ]]; then
@@ -76,17 +76,17 @@ remove_otto() {
     # Remove aux directory
     if [ -d "aux" ]; then
         rm -rf aux
-        echo -e "${GREEN}   ✓ Removed aux/ directory${NC}"
+        echo -e "${GREEN}   Removed aux/ directory${NC}"
     else
-        echo "   ⊘ aux/ directory not found (skipped)"
+        echo "   aux/ directory not found (skipped)"
     fi
 
     # Remove slash command
     if [ -f ".claude/commands/otto.md" ]; then
         rm -f ".claude/commands/otto.md"
-        echo -e "${GREEN}   ✓ Removed .claude/commands/otto.md${NC}"
+        echo -e "${GREEN}   Removed .claude/commands/otto.md${NC}"
     else
-        echo "   ⊘ .claude/commands/otto.md not found (skipped)"
+        echo "   .claude/commands/otto.md not found (skipped)"
     fi
 
     # Remove Otto sections from config files
@@ -97,7 +97,7 @@ remove_otto() {
     remove_otto_section "AGENTS.md" "AGENTS.md"
 
     echo ""
-    echo -e "${GREEN}✅ Otto has been completely removed from this repository${NC}"
+    echo -e "${GREEN}Otto has been completely removed from this repository${NC}"
     echo ""
     echo "All Otto files and references have been deleted."
     echo ""
@@ -127,14 +127,14 @@ if [ "$1" == "--remove" ]; then
     remove_otto
 fi
 
-echo "🔍 Otto Bootstrap"
+echo "Otto Bootstrap"
 echo "===================="
 echo ""
 
 # Check if aux/ already exists
 if [ -d "aux" ] && [ -f "aux/protocol.md" ]; then
-    echo -e "${YELLOW}⚠️  Warning: aux/ directory with Otto files already exists${NC}"
-    read -p "Do you want to re-download and overwrite? (y/N): " -n 1 -r
+    echo -e "${YELLOW}Warning: aux/ directory with Otto files already exists${NC}"
+    read -p "Do you want to re-download and overwrite? (y/N): " -n 1 -r < /dev/tty
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "Aborted. No changes made."
@@ -143,76 +143,76 @@ if [ -d "aux" ] && [ -f "aux/protocol.md" ]; then
 fi
 
 # Create directory structure
-echo "📁 Creating directory structure..."
+echo "Creating directory structure..."
 mkdir -p aux/specs aux/done aux/guides aux/protocol
 
 # Download core protocol files
-echo "⬇️  Downloading Otto protocol files..."
+echo "Downloading Otto protocol files..."
 
 # Download modular protocol files
 if curl -sSL "${BASE_URL}/aux/protocol/core.md" -o aux/protocol/core.md; then
-    echo "   ✓ aux/protocol/core.md"
+    echo "   aux/protocol/core.md"
 else
-    echo -e "${RED}   ✗ Failed to download aux/protocol/core.md${NC}"
+    echo -e "${RED}   Failed to download aux/protocol/core.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/protocol/specs.md" -o aux/protocol/specs.md; then
-    echo "   ✓ aux/protocol/specs.md"
+    echo "   aux/protocol/specs.md"
 else
-    echo -e "${RED}   ✗ Failed to download aux/protocol/specs.md${NC}"
+    echo -e "${RED}   Failed to download aux/protocol/specs.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/protocol/blockers.md" -o aux/protocol/blockers.md; then
-    echo "   ✓ aux/protocol/blockers.md"
+    echo "   aux/protocol/blockers.md"
 else
-    echo -e "${RED}   ✗ Failed to download aux/protocol/blockers.md${NC}"
+    echo -e "${RED}   Failed to download aux/protocol/blockers.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/protocol/index.md" -o aux/protocol/index.md; then
-    echo "   ✓ aux/protocol/index.md"
+    echo "   aux/protocol/index.md"
 else
-    echo -e "${RED}   ✗ Failed to download aux/protocol/index.md${NC}"
+    echo -e "${RED}   Failed to download aux/protocol/index.md${NC}"
     exit 1
 fi
 
 # Download reference files
 if curl -sSL "${BASE_URL}/aux/otto.md" -o aux/otto.md; then
-    echo "   ✓ aux/otto.md"
+    echo "   aux/otto.md"
 else
-    echo -e "${RED}   ✗ Failed to download aux/otto.md${NC}"
+    echo -e "${RED}   Failed to download aux/otto.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/spec-template.md" -o aux/spec-template.md; then
-    echo "   ✓ aux/spec-template.md"
+    echo "   aux/spec-template.md"
 else
-    echo -e "${RED}   ✗ Failed to download aux/spec-template.md${NC}"
+    echo -e "${RED}   Failed to download aux/spec-template.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/guides/ai-implementation.md" -o aux/guides/ai-implementation.md; then
-    echo "   ✓ aux/guides/ai-implementation.md"
+    echo "   aux/guides/ai-implementation.md"
 else
-    echo -e "${RED}   ✗ Failed to download aux/guides/ai-implementation.md${NC}"
+    echo -e "${RED}   Failed to download aux/guides/ai-implementation.md${NC}"
     exit 1
 fi
 
 # Download single-file protocol.md
 if curl -sSL "${BASE_URL}/aux/protocol.md" -o aux/protocol.md; then
-    echo "   ✓ aux/protocol.md (single-file version)"
+    echo "   aux/protocol.md (single-file version)"
 else
-    echo -e "${YELLOW}   ⚠️  Single-file protocol.md not available (not critical)${NC}"
+    echo -e "${YELLOW}   Single-file protocol.md not available (not critical)${NC}"
 fi
 
 # Check if project.md exists
 if [ -f "aux/project.md" ]; then
-    echo "   ⚠️  aux/project.md already exists, skipping"
+    echo "   aux/project.md already exists, skipping"
 else
     echo ""
-    echo "📝 Creating project.md template..."
+    echo "Creating project.md template..."
     cat > aux/project.md << 'EOF'
 # Project Reference
 
@@ -240,10 +240,10 @@ Example:
 ## Non-Negotiables
 [Things that never get compromised]
 EOF
-    echo "   ✓ project.md (template created - please customize)"
+    echo "   project.md (template created - please customize)"
     echo ""
-    echo -e "${YELLOW}   ⚠️  IMPORTANT: The placeholder template won't provide useful context.${NC}"
-    echo -e "${YELLOW}      Say 'Otto, help me set up project.md' to fill it in properly.${NC}"
+    echo -e "${YELLOW}   IMPORTANT: The placeholder template won't provide useful context.${NC}"
+    echo -e "${YELLOW}   Say 'Otto, help me set up project.md' to fill it in properly.${NC}"
 fi
 
 # Function to append Otto section to AI config file
@@ -253,14 +253,14 @@ append_otto_section() {
 
     # Check if Otto section already exists
     if grep -q "SPEC-PROTOCOL:START" "$config_file" 2>/dev/null; then
-        echo -e "${YELLOW}   ⚠️  Otto section already exists in $config_name, skipping${NC}"
+        echo -e "${YELLOW}   Otto section already exists in $config_name, skipping${NC}"
         return 0
     fi
 
     echo ""
-    echo -e "${GREEN}📌 $config_name detected!${NC}"
+    echo -e "${GREEN}$config_name detected!${NC}"
     echo ""
-    read -p "Would you like to append the Otto Protocol section to $config_name? (Y/n): " -n 1 -r
+    read -p "Would you like to append the Otto Protocol section to $config_name? (Y/n): " -n 1 -r < /dev/tty
     echo
 
     if [[ $REPLY =~ ^[Nn]$ ]]; then
@@ -290,7 +290,7 @@ append_otto_section() {
 <!-- SPEC-PROTOCOL:END -->
 EOF
 
-    echo -e "${GREEN}   ✓ Otto section added to $config_name${NC}"
+    echo -e "${GREEN}   Otto section added to $config_name${NC}"
 }
 
 # Function to install Claude Code slash command
@@ -300,17 +300,17 @@ install_claude_slash_command() {
 
     # Check if .claude/commands already has otto.md
     if [ -f "$otto_command_file" ]; then
-        echo -e "${YELLOW}   ⚠️  /otto command already exists in $project_commands_dir, skipping${NC}"
+        echo -e "${YELLOW}   /otto command already exists in $project_commands_dir, skipping${NC}"
         return 0
     fi
 
     echo ""
-    echo -e "${GREEN}🎯 Claude Code detected!${NC}"
+    echo -e "${GREEN}Claude Code detected!${NC}"
     echo ""
     echo "Would you like to install the /otto slash command for Claude Code?"
     echo "This allows you to use '/otto [feature]' instead of saying 'Otto' in chat."
     echo ""
-    read -p "Install /otto slash command? (Y/n): " -n 1 -r
+    read -p "Install /otto slash command? (Y/n): " -n 1 -r < /dev/tty
     echo
 
     if [[ $REPLY =~ ^[Nn]$ ]]; then
@@ -323,11 +323,11 @@ install_claude_slash_command() {
 
     # Download otto.md slash command
     if curl -sSL "${BASE_URL}/.claude/commands/otto.md" -o "$otto_command_file"; then
-        echo -e "${GREEN}   ✓ /otto slash command installed${NC}"
+        echo -e "${GREEN}   /otto slash command installed${NC}"
         echo "   You can now use: /otto [feature description]"
         return 0
     else
-        echo -e "${RED}   ✗ Failed to download slash command${NC}"
+        echo -e "${RED}   Failed to download slash command${NC}"
         return 1
     fi
 }
@@ -356,7 +356,7 @@ if [ -f "CLAUDE.md" ]; then
         append_otto_section "CLAUDE.md" "CLAUDE.md"
     else
         echo ""
-        echo -e "${GREEN}✓ Slash command installed - skipping CLAUDE.md section (not needed)${NC}"
+        echo -e "${GREEN}Slash command installed - skipping CLAUDE.md section (not needed)${NC}"
     fi
 fi
 
@@ -366,11 +366,11 @@ if [ -f "AGENTS.md" ]; then
 fi
 
 echo ""
-echo -e "${GREEN}✅ Otto bootstrap complete!${NC}"
+echo -e "${GREEN}Otto bootstrap complete!${NC}"
 echo ""
 echo "Next steps:"
 if [ "$AI_CONFIG_DETECTED" = true ]; then
-    echo -e "${YELLOW}⚠️  IMPORTANT: Set up project.md before using Otto!${NC}"
+    echo -e "${YELLOW}IMPORTANT: Set up project.md before using Otto!${NC}"
     echo "   Say: 'Otto, help me set up project.md' - your AI will guide you"
     echo ""
     if [ "$SLASH_COMMAND_INSTALLED" = true ]; then
@@ -380,11 +380,11 @@ if [ "$AI_CONFIG_DETECTED" = true ]; then
         echo "Then start using Otto for your features by saying 'Otto'"
     fi
 else
-    echo -e "${YELLOW}⚠️  Manual step required:${NC} Add Otto Protocol section to your AI config file"
+    echo -e "${YELLOW}Manual step required:${NC} Add Otto Protocol section to your AI config file"
     echo "   (CLAUDE.md, AGENTS.md, .cursorrules, etc.)"
     echo "   See README.md for the section to add."
     echo ""
-    echo -e "${YELLOW}⚠️  IMPORTANT: Set up project.md before using Otto!${NC}"
+    echo -e "${YELLOW}IMPORTANT: Set up project.md before using Otto!${NC}"
     echo "   Say: 'Otto, help me set up project.md' - your AI will guide you"
     echo ""
     if [ "$SLASH_COMMAND_INSTALLED" = true ]; then
