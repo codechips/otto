@@ -14,7 +14,8 @@ curl -sSL https://raw.githubusercontent.com/codechips/otto/main/bootstrap.sh | b
 
 **Then:** Say "Otto, help me set up project.md" and your AI will guide you through it.
 
-**When to use:** Vague requests ("add auth"), multi-step features (4+ files), breaking changes
+**When to use:** Vague requests ("add auth"), multi-step features (4+ files), breaking changes.
+
 **When to skip:** Obvious fixes, trivial changes, you already know exactly what you want
 
 ## The Problem
@@ -62,6 +63,10 @@ No lock-in, maximum flexibility:
 - **Adaptable**: Modify the protocol to fit your team - add sections, change formats, adjust the workflow
 
 **Your project, your rules.** Otto is a starting point, not a straitjacket.
+
+## Why the name Otto?
+
+It's fun and easy to type. It's also German and Germans a famous for their efficiency and order.
 
 ## Philosophy
 
@@ -117,18 +122,21 @@ If you prefer to set up manually:
 
 ```bash
 # 1. Create directory structure
-mkdir -p aux/specs aux/done
+mkdir -p aux/specs aux/done aux/guides aux/protocol
 
-# 2. Download core files
-cd aux/
-curl -O https://raw.githubusercontent.com/codechips/otto/main/aux/otto.md
-curl -O https://raw.githubusercontent.com/codechips/otto/main/aux/protocol.md
-curl -O https://raw.githubusercontent.com/codechips/otto/main/aux/spec-template.md
-mkdir -p guides
-curl -o guides/ai-implementation.md https://raw.githubusercontent.com/codechips/otto/main/aux/guides/ai-implementation.md
-cd ..
+# 2. Download modular protocol files
+curl -o aux/protocol/core.md https://raw.githubusercontent.com/codechips/otto/main/aux/protocol/core.md
+curl -o aux/protocol/specs.md https://raw.githubusercontent.com/codechips/otto/main/aux/protocol/specs.md
+curl -o aux/protocol/blockers.md https://raw.githubusercontent.com/codechips/otto/main/aux/protocol/blockers.md
+curl -o aux/protocol/index.md https://raw.githubusercontent.com/codechips/otto/main/aux/protocol/index.md
 
-# 3. Create project.md from template below
+# 3. Download reference files
+curl -o aux/otto.md https://raw.githubusercontent.com/codechips/otto/main/aux/otto.md
+curl -o aux/spec-template.md https://raw.githubusercontent.com/codechips/otto/main/aux/spec-template.md
+curl -o aux/guides/ai-implementation.md https://raw.githubusercontent.com/codechips/otto/main/aux/guides/ai-implementation.md
+curl -o aux/protocol.md https://raw.githubusercontent.com/codechips/otto/main/aux/protocol.md
+
+# 4. Create project.md from template below
 ```
 
 **project.md template:**
@@ -275,23 +283,6 @@ your-project/
 └── [your code files]
 ```
 
-### Essential Files Reference
-
-| File | Audience | Purpose |
-|------|----------|---------|
-| **otto.md** | Humans | Quick reference guide with setup instructions and usage patterns |
-| **protocol/core.md** | AI & Humans | State machine and workflow (optimized for context efficiency ~680 tokens) |
-| **protocol/specs.md** | AI & Humans | Spec format and success criteria guidelines (load when creating specs ~364 tokens) |
-| **protocol/blockers.md** | AI & Humans | Blocker handling procedures (load when blocked ~399 tokens) |
-| **protocol/index.md** | AI & Humans | Module overview and navigation |
-| **protocol.md** | AI & Humans | Single file version of the protocol (all modules combined) |
-| **project.md** | AI & Humans | Project-specific context (stack, patterns, constraints) |
-| **spec-template.md** | AI & Humans | Format reference and examples for creating specs |
-| **guides/ai-implementation.md** | AI Systems | Instructions for AI assistants implementing Otto (memory management, error handling, tools). Also useful for developers building custom AI tools. |
-| **bootstrap.sh** | Humans | Automated setup script for installing Otto in any project |
-| **specs/*.md** | AI & Humans | Active feature specs (work in progress) |
-| **done/*.md** | AI & Humans | Completed specs (historical reference) |
-
 ## Why Keep Completed Specs?
 
 Specs in `done/` are valuable beyond their implementation:
@@ -328,7 +319,7 @@ The `project.md` file provides context that helps AI ask better questions and ma
 - More time spent correcting AI during implementation
 
 **Practical approach:**
-- When you make architectural changes, update project.md immediately
+- When you make architectural changes, update project.md immediately (or tell your AI assistant to update it)
 - During monthly reviews, scan Architecture Patterns and remove/update obsolete entries
 - Keep it current or remove it - stale patterns are worse than no patterns
 
