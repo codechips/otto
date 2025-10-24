@@ -156,12 +156,71 @@ EOF
     echo -e "${GREEN}   ✓ Otto section added to $config_name${NC}"
 }
 
+# Function to install Claude Code slash command
+install_claude_slash_command() {
+    local project_commands_dir=".claude/commands"
+    local otto_command_file="$project_commands_dir/otto.md"
+
+    # Check if .claude/commands already has otto.md
+    if [ -f "$otto_command_file" ]; then
+        echo -e "${YELLOW}   ⚠️  /otto command already exists in $project_commands_dir, skipping${NC}"
+        return 0
+    fi
+
+    echo ""
+    echo -e "${GREEN}🎯 Claude Code detected!${NC}"
+    echo ""
+    echo "Would you like to install the /otto slash command for Claude Code?"
+    echo "This allows you to use '/otto [feature]' instead of saying 'Otto' in chat."
+    echo ""
+    read -p "Install /otto slash command? (Y/n): " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+        echo "   Skipped. You can say 'Otto' in chat instead."
+        return 0
+    fi
+
+    # Create .claude/commands directory
+    mkdir -p "$project_commands_dir"
+
+    # Download otto.md slash command
+    if curl -sSL "${BASE_URL}/.claude/commands/otto.md" -o "$otto_command_file"; then
+        echo -e "${GREEN}   ✓ /otto slash command installed${NC}"
+        echo "   You can now use: /otto [feature description]"
+        return 0
+    else
+        echo -e "${RED}   ✗ Failed to download slash command${NC}"
+        return 1
+    fi
+}
+
 # Check for AI assistant config files
 AI_CONFIG_DETECTED=false
+CLAUDE_CODE_DETECTED=false
+SLASH_COMMAND_INSTALLED=false
 
+# Check if we're in a Claude Code environment
+if command -v claude &> /dev/null || [ -n "$CLAUDE_CODE" ]; then
+    CLAUDE_CODE_DETECTED=true
+fi
+
+# Offer Claude Code slash command installation first if detected
+if [ "$CLAUDE_CODE_DETECTED" = true ]; then
+    if install_claude_slash_command; then
+        SLASH_COMMAND_INSTALLED=true
+    fi
+fi
+
+# Only append to CLAUDE.md if slash command was NOT installed
 if [ -f "CLAUDE.md" ]; then
     AI_CONFIG_DETECTED=true
-    append_otto_section "CLAUDE.md" "CLAUDE.md"
+    if [ "$SLASH_COMMAND_INSTALLED" = false ]; then
+        append_otto_section "CLAUDE.md" "CLAUDE.md"
+    else
+        echo ""
+        echo -e "${GREEN}✓ Slash command installed - skipping CLAUDE.md section (not needed)${NC}"
+    fi
 fi
 
 if [ -f "AGENTS.md" ]; then
@@ -177,7 +236,12 @@ if [ "$AI_CONFIG_DETECTED" = true ]; then
     echo -e "${YELLOW}⚠️  IMPORTANT: Set up project.md before using Otto!${NC}"
     echo "   Say: 'Otto, help me set up project.md' - your AI will guide you"
     echo ""
-    echo "Then start using Otto for your features by saying 'Otto'"
+    if [ "$SLASH_COMMAND_INSTALLED" = true ]; then
+        echo "Then start using Otto by typing: /otto [feature description]"
+        echo "(Or say 'Otto' in chat if you prefer)"
+    else
+        echo "Then start using Otto for your features by saying 'Otto'"
+    fi
 else
     echo -e "${YELLOW}⚠️  Manual step required:${NC} Add Otto Protocol section to your AI config file"
     echo "   (CLAUDE.md, AGENTS.md, .cursorrules, etc.)"
@@ -186,7 +250,12 @@ else
     echo -e "${YELLOW}⚠️  IMPORTANT: Set up project.md before using Otto!${NC}"
     echo "   Say: 'Otto, help me set up project.md' - your AI will guide you"
     echo ""
-    echo "Then start using Otto for your features by saying 'Otto'"
+    if [ "$SLASH_COMMAND_INSTALLED" = true ]; then
+        echo "Then start using Otto by typing: /otto [feature description]"
+        echo "(Or say 'Otto' in chat if you prefer)"
+    else
+        echo "Then start using Otto for your features by saying 'Otto'"
+    fi
 fi
 echo ""
 echo "Documentation: https://github.com/codechips/otto"
