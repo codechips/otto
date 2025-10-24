@@ -40,8 +40,6 @@ remove_otto_section() {
         return 0
     fi
 
-    echo "   Removing Otto section from $config_name..."
-
     # Create temp file without Otto section
     sed '/<!-- SPEC-PROTOCOL:START -->/,/<!-- SPEC-PROTOCOL:END -->/d' "$config_file" > "${config_file}.tmp"
     mv "${config_file}.tmp" "$config_file"
@@ -349,16 +347,12 @@ if [ "$CLAUDE_CODE_DETECTED" = true ]; then
     fi
 fi
 
-# Append Otto section to config files
-if [ -f "CLAUDE.md" ]; then
-    AI_CONFIG_DETECTED=true
-    append_otto_section "CLAUDE.md" "CLAUDE.md"
-else
-    # Create CLAUDE.md with Otto section
-    AI_CONFIG_DETECTED=true
-    echo ""
-    echo -e "${GREEN}Creating CLAUDE.md with Otto Protocol section...${NC}"
-    cat > CLAUDE.md << 'EOF'
+# Function to create config file with Otto section
+create_config_file() {
+    local config_file="$1"
+    local config_name="$2"
+
+    cat > "$config_file" << 'EOF'
 <!-- SPEC-PROTOCOL:START -->
 # Otto Protocol
 
@@ -377,37 +371,63 @@ else
 
 <!-- SPEC-PROTOCOL:END -->
 EOF
-    echo -e "${GREEN}   CLAUDE.md created${NC}"
+    echo -e "${GREEN}   $config_name created${NC}"
+}
+
+# Append Otto section to config files
+if [ -f "CLAUDE.md" ]; then
+    AI_CONFIG_DETECTED=true
+    append_otto_section "CLAUDE.md" "CLAUDE.md"
+elif [ "$CLAUDE_CODE_DETECTED" = true ]; then
+    # Claude Code detected and CLAUDE.md doesn't exist - create it
+    AI_CONFIG_DETECTED=true
+    echo ""
+    echo -e "${GREEN}Creating CLAUDE.md with Otto Protocol section...${NC}"
+    create_config_file "CLAUDE.md" "CLAUDE.md"
 fi
 
 if [ -f "AGENTS.md" ]; then
     AI_CONFIG_DETECTED=true
     append_otto_section "AGENTS.md" "AGENTS.md"
-else
-    # Create AGENTS.md with Otto section
-    AI_CONFIG_DETECTED=true
+fi
+
+# If no config files found and not Claude Code, ask which to create
+if [ "$AI_CONFIG_DETECTED" = false ]; then
     echo ""
-    echo -e "${GREEN}Creating AGENTS.md with Otto Protocol section...${NC}"
-    cat > AGENTS.md << 'EOF'
-<!-- SPEC-PROTOCOL:START -->
-# Otto Protocol
+    echo -e "${YELLOW}No AI config files detected (CLAUDE.md or AGENTS.md)${NC}"
+    echo ""
+    echo "Which AI assistant config file would you like to create?"
+    echo "  1) CLAUDE.md (for Claude Code)"
+    echo "  2) AGENTS.md (for Cursor, Windsurf, etc.)"
+    echo "  3) Both"
+    echo "  4) Neither (skip - I'll add Otto section manually)"
+    echo ""
+    read -p "Enter choice (1-4): " -n 1 -r < /dev/tty
+    echo
+    echo
 
-**This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding.
-
-**When user says "Otto":**
-1. Read `aux/protocol/core.md` (state machine and workflow)
-2. Read `aux/project.md` (project context)
-3. Follow the state machine defined in core.md
-4. Load additional modules on-demand:
-   - Creating specs? Read `aux/protocol/specs.md`
-   - Hit blocker? Read `aux/protocol/blockers.md`
-5. For AI-specific guidance, see `aux/guides/ai-implementation.md`
-
-**Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
-
-<!-- SPEC-PROTOCOL:END -->
-EOF
-    echo -e "${GREEN}   AGENTS.md created${NC}"
+    case $REPLY in
+        1)
+            AI_CONFIG_DETECTED=true
+            create_config_file "CLAUDE.md" "CLAUDE.md"
+            ;;
+        2)
+            AI_CONFIG_DETECTED=true
+            create_config_file "AGENTS.md" "AGENTS.md"
+            ;;
+        3)
+            AI_CONFIG_DETECTED=true
+            create_config_file "CLAUDE.md" "CLAUDE.md"
+            create_config_file "AGENTS.md" "AGENTS.md"
+            ;;
+        4)
+            echo "   Skipped. You can manually add the Otto section later."
+            echo "   See README.md for the section to add."
+            ;;
+        *)
+            echo "   Invalid choice. Skipping config file creation."
+            ;;
+    esac
 fi
 
 echo ""
