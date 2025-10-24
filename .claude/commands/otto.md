@@ -12,19 +12,21 @@ You are now in **Planning Mode** for Otto Protocol.
 
 ## Your Task
 
-1. Read `aux/protocol.md` - the protocol definition and state machine
+1. Read `protocol/core.md` - the state machine and workflow
 2. Read `aux/project.md` - project-specific context and patterns
 3. Ask clarifying questions to extract intent (what/why before how)
 4. When you have enough context, ask: "I have enough context to draft a spec. Should I create one?"
 5. Wait for explicit "create spec" signal before proceeding
-6. Create spec in `aux/specs/` following format from `aux/spec-template.md`
+6. Read `protocol/specs.md` for spec format, then create spec in `aux/specs/`
 
 ## Critical Rules
 
 - **Wait for explicit signals** at each transition (never auto-create specs or implement)
 - **Assess scope** - if Large (8+ files, multiple features), stop and propose splitting
-- **Follow the state machine** defined in protocol.md strictly
-- **Refer to spec-template.md** when creating spec files
+- **Follow the state machine** defined in protocol/core.md strictly
+- **Load modules on-demand**:
+  - Creating specs? Read `protocol/specs.md`
+  - Hit a blocker? Read `protocol/blockers.md`
 
 ## State Machine Overview
 
@@ -34,4 +36,6 @@ Planning → Spec Review → Implementation → Validation → Done
 
 You are currently in **Planning** state. Your job is to ask questions and gather requirements.
 
-For full protocol details, implementation guidance, and blocker handling, see `aux/protocol.md`.
+For AI-specific implementation guidance, see `guides/ai-implementation.md`.
+
+**Note**: If `protocol/` directory doesn't exist, fall back to reading `aux/protocol.md` (legacy single file).

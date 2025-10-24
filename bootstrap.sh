@@ -39,38 +39,68 @@ if [ -d "aux" ] && [ -f "aux/protocol.md" ]; then
 fi
 
 # Create directory structure
-echo "📁 Creating aux/ directory structure..."
-mkdir -p aux/specs aux/done aux/guides
+echo "📁 Creating directory structure..."
+mkdir -p aux/specs aux/done aux/guides protocol
 
-# Download core protocol files to aux/
+# Download core protocol files
 echo "⬇️  Downloading Otto protocol files..."
 
+# Download modular protocol files
+if curl -sSL "${BASE_URL}/protocol/core.md" -o protocol/core.md; then
+    echo "   ✓ protocol/core.md"
+else
+    echo -e "${RED}   ✗ Failed to download protocol/core.md${NC}"
+    exit 1
+fi
+
+if curl -sSL "${BASE_URL}/protocol/specs.md" -o protocol/specs.md; then
+    echo "   ✓ protocol/specs.md"
+else
+    echo -e "${RED}   ✗ Failed to download protocol/specs.md${NC}"
+    exit 1
+fi
+
+if curl -sSL "${BASE_URL}/protocol/blockers.md" -o protocol/blockers.md; then
+    echo "   ✓ protocol/blockers.md"
+else
+    echo -e "${RED}   ✗ Failed to download protocol/blockers.md${NC}"
+    exit 1
+fi
+
+if curl -sSL "${BASE_URL}/protocol/index.md" -o protocol/index.md; then
+    echo "   ✓ protocol/index.md"
+else
+    echo -e "${RED}   ✗ Failed to download protocol/index.md${NC}"
+    exit 1
+fi
+
+# Download reference files to aux/
 if curl -sSL "${BASE_URL}/otto.md" -o aux/otto.md; then
-    echo "   ✓ otto.md"
+    echo "   ✓ aux/otto.md"
 else
     echo -e "${RED}   ✗ Failed to download otto.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/protocol.md" -o aux/protocol.md; then
-    echo "   ✓ protocol.md"
-else
-    echo -e "${RED}   ✗ Failed to download protocol.md${NC}"
-    exit 1
-fi
-
 if curl -sSL "${BASE_URL}/spec-template.md" -o aux/spec-template.md; then
-    echo "   ✓ spec-template.md"
+    echo "   ✓ aux/spec-template.md"
 else
     echo -e "${RED}   ✗ Failed to download spec-template.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/guides/ai-implementation.md" -o aux/guides/ai-implementation.md; then
-    echo "   ✓ guides/ai-implementation.md"
+    echo "   ✓ aux/guides/ai-implementation.md"
 else
     echo -e "${RED}   ✗ Failed to download guides/ai-implementation.md${NC}"
     exit 1
+fi
+
+# Download legacy protocol.md for backward compatibility
+if curl -sSL "${BASE_URL}/protocol.md" -o aux/protocol.md; then
+    echo "   ✓ aux/protocol.md (legacy compatibility)"
+else
+    echo -e "${YELLOW}   ⚠️  Legacy protocol.md not available (not critical)${NC}"
 fi
 
 # Check if project.md exists
@@ -143,12 +173,17 @@ append_otto_section() {
 **This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding.
 
 **When user says "Otto":**
-1. Read `aux/protocol.md` (protocol definition - the contract)
+1. Read `protocol/core.md` (state machine and workflow)
 2. Read `aux/project.md` (project context)
-3. Follow the state machine and workflow defined in protocol.md
-4. For implementation guidance, see `aux/guides/ai-implementation.md`
+3. Follow the state machine defined in core.md
+4. Load additional modules on-demand:
+   - Creating specs? Read `protocol/specs.md`
+   - Hit blocker? Read `protocol/blockers.md`
+5. For AI-specific guidance, see `aux/guides/ai-implementation.md`
 
 **Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
+
+**Note**: If `protocol/` directory doesn't exist (legacy setup), fall back to `aux/protocol.md`
 
 <!-- SPEC-PROTOCOL:END -->
 EOF
