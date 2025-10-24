@@ -349,15 +349,10 @@ if [ "$CLAUDE_CODE_DETECTED" = true ]; then
     fi
 fi
 
-# Only append to CLAUDE.md if slash command was NOT installed
+# Append Otto section to config files
 if [ -f "CLAUDE.md" ]; then
     AI_CONFIG_DETECTED=true
-    if [ "$SLASH_COMMAND_INSTALLED" = false ]; then
-        append_otto_section "CLAUDE.md" "CLAUDE.md"
-    else
-        echo ""
-        echo -e "${GREEN}Slash command installed - skipping CLAUDE.md section (not needed)${NC}"
-    fi
+    append_otto_section "CLAUDE.md" "CLAUDE.md"
 fi
 
 if [ -f "AGENTS.md" ]; then
