@@ -120,11 +120,11 @@ mkdir -p aux/specs aux/done
 
 # 2. Download core files
 cd aux/
-curl -O https://raw.githubusercontent.com/codechips/otto/main/otto.md
-curl -O https://raw.githubusercontent.com/codechips/otto/main/protocol.md
-curl -O https://raw.githubusercontent.com/codechips/otto/main/spec-template.md
+curl -O https://raw.githubusercontent.com/codechips/otto/main/aux/otto.md
+curl -O https://raw.githubusercontent.com/codechips/otto/main/aux/protocol.md
+curl -O https://raw.githubusercontent.com/codechips/otto/main/aux/spec-template.md
 mkdir -p guides
-curl -o guides/ai-implementation.md https://raw.githubusercontent.com/codechips/otto/main/guides/ai-implementation.md
+curl -o guides/ai-implementation.md https://raw.githubusercontent.com/codechips/otto/main/aux/guides/ai-implementation.md
 cd ..
 
 # 3. Create project.md from template below

@@ -150,58 +150,58 @@ mkdir -p aux/specs aux/done aux/guides aux/protocol
 echo "⬇️  Downloading Otto protocol files..."
 
 # Download modular protocol files
-if curl -sSL "${BASE_URL}/protocol/core.md" -o aux/protocol/core.md; then
+if curl -sSL "${BASE_URL}/aux/protocol/core.md" -o aux/protocol/core.md; then
     echo "   ✓ aux/protocol/core.md"
 else
-    echo -e "${RED}   ✗ Failed to download protocol/core.md${NC}"
+    echo -e "${RED}   ✗ Failed to download aux/protocol/core.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/protocol/specs.md" -o aux/protocol/specs.md; then
+if curl -sSL "${BASE_URL}/aux/protocol/specs.md" -o aux/protocol/specs.md; then
     echo "   ✓ aux/protocol/specs.md"
 else
-    echo -e "${RED}   ✗ Failed to download protocol/specs.md${NC}"
+    echo -e "${RED}   ✗ Failed to download aux/protocol/specs.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/protocol/blockers.md" -o aux/protocol/blockers.md; then
+if curl -sSL "${BASE_URL}/aux/protocol/blockers.md" -o aux/protocol/blockers.md; then
     echo "   ✓ aux/protocol/blockers.md"
 else
-    echo -e "${RED}   ✗ Failed to download protocol/blockers.md${NC}"
+    echo -e "${RED}   ✗ Failed to download aux/protocol/blockers.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/protocol/index.md" -o aux/protocol/index.md; then
+if curl -sSL "${BASE_URL}/aux/protocol/index.md" -o aux/protocol/index.md; then
     echo "   ✓ aux/protocol/index.md"
 else
-    echo -e "${RED}   ✗ Failed to download protocol/index.md${NC}"
+    echo -e "${RED}   ✗ Failed to download aux/protocol/index.md${NC}"
     exit 1
 fi
 
-# Download reference files to aux/
-if curl -sSL "${BASE_URL}/otto.md" -o aux/otto.md; then
+# Download reference files
+if curl -sSL "${BASE_URL}/aux/otto.md" -o aux/otto.md; then
     echo "   ✓ aux/otto.md"
 else
-    echo -e "${RED}   ✗ Failed to download otto.md${NC}"
+    echo -e "${RED}   ✗ Failed to download aux/otto.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/spec-template.md" -o aux/spec-template.md; then
+if curl -sSL "${BASE_URL}/aux/spec-template.md" -o aux/spec-template.md; then
     echo "   ✓ aux/spec-template.md"
 else
-    echo -e "${RED}   ✗ Failed to download spec-template.md${NC}"
+    echo -e "${RED}   ✗ Failed to download aux/spec-template.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/guides/ai-implementation.md" -o aux/guides/ai-implementation.md; then
+if curl -sSL "${BASE_URL}/aux/guides/ai-implementation.md" -o aux/guides/ai-implementation.md; then
     echo "   ✓ aux/guides/ai-implementation.md"
 else
-    echo -e "${RED}   ✗ Failed to download guides/ai-implementation.md${NC}"
+    echo -e "${RED}   ✗ Failed to download aux/guides/ai-implementation.md${NC}"
     exit 1
 fi
 
 # Download legacy protocol.md for backward compatibility
-if curl -sSL "${BASE_URL}/protocol.md" -o aux/protocol.md; then
+if curl -sSL "${BASE_URL}/aux/protocol.md" -o aux/protocol.md; then
     echo "   ✓ aux/protocol.md (legacy compatibility)"
 else
     echo -e "${YELLOW}   ⚠️  Legacy protocol.md not available (not critical)${NC}"
