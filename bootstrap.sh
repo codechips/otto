@@ -353,6 +353,31 @@ fi
 if [ -f "CLAUDE.md" ]; then
     AI_CONFIG_DETECTED=true
     append_otto_section "CLAUDE.md" "CLAUDE.md"
+else
+    # Create CLAUDE.md with Otto section
+    AI_CONFIG_DETECTED=true
+    echo ""
+    echo -e "${GREEN}Creating CLAUDE.md with Otto Protocol section...${NC}"
+    cat > CLAUDE.md << 'EOF'
+<!-- SPEC-PROTOCOL:START -->
+# Otto Protocol
+
+**This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding.
+
+**When user says "Otto":**
+1. Read `aux/protocol/core.md` (state machine and workflow)
+2. Read `aux/project.md` (project context)
+3. Follow the state machine defined in core.md
+4. Load additional modules on-demand:
+   - Creating specs? Read `aux/protocol/specs.md`
+   - Hit blocker? Read `aux/protocol/blockers.md`
+5. For AI-specific guidance, see `aux/guides/ai-implementation.md`
+
+**Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
+
+<!-- SPEC-PROTOCOL:END -->
+EOF
+    echo -e "${GREEN}   CLAUDE.md created${NC}"
 fi
 
 if [ -f "AGENTS.md" ]; then
