@@ -110,7 +110,7 @@ If you find yourself writing 10+ success criteria, the feature is too large. Spl
 ---
 
 **See also**:
-- `protocol/core.md` - State machine and workflow
-- `spec-template.md` - Complete example spec
+- `aux/protocol/core.md` - State machine and workflow
+- `aux/spec-template.md` - Complete example spec
 
 **End of specs.md**

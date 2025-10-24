@@ -55,8 +55,7 @@ remove_otto() {
     echo "===================="
     echo ""
     echo -e "${YELLOW}This will remove ALL Otto files and references from this repository:${NC}"
-    echo "  - aux/ directory (all specs, protocol files)"
-    echo "  - protocol/ directory (modular protocol files)"
+    echo "  - aux/ directory (all specs and protocol files)"
     echo "  - .claude/commands/otto.md (slash command)"
     echo "  - Otto sections from CLAUDE.md and AGENTS.md"
     echo ""
@@ -74,19 +73,12 @@ remove_otto() {
     echo ""
     echo "Removing Otto files..."
 
-    # Remove directories
+    # Remove aux directory
     if [ -d "aux" ]; then
         rm -rf aux
         echo -e "${GREEN}   ✓ Removed aux/ directory${NC}"
     else
         echo "   ⊘ aux/ directory not found (skipped)"
-    fi
-
-    if [ -d "protocol" ]; then
-        rm -rf protocol
-        echo -e "${GREEN}   ✓ Removed protocol/ directory${NC}"
-    else
-        echo "   ⊘ protocol/ directory not found (skipped)"
     fi
 
     # Remove slash command
@@ -124,7 +116,6 @@ if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
     echo ""
     echo "Installation creates:"
     echo "  - aux/ directory (specs, project.md, protocol files)"
-    echo "  - protocol/ directory (modular protocol files)"
     echo "  - .claude/commands/otto.md (optional slash command)"
     echo ""
     echo "Removal deletes all Otto files and references from CLAUDE.md/AGENTS.md"
@@ -153,35 +144,35 @@ fi
 
 # Create directory structure
 echo "📁 Creating directory structure..."
-mkdir -p aux/specs aux/done aux/guides protocol
+mkdir -p aux/specs aux/done aux/guides aux/protocol
 
 # Download core protocol files
 echo "⬇️  Downloading Otto protocol files..."
 
 # Download modular protocol files
-if curl -sSL "${BASE_URL}/protocol/core.md" -o protocol/core.md; then
-    echo "   ✓ protocol/core.md"
+if curl -sSL "${BASE_URL}/protocol/core.md" -o aux/protocol/core.md; then
+    echo "   ✓ aux/protocol/core.md"
 else
     echo -e "${RED}   ✗ Failed to download protocol/core.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/protocol/specs.md" -o protocol/specs.md; then
-    echo "   ✓ protocol/specs.md"
+if curl -sSL "${BASE_URL}/protocol/specs.md" -o aux/protocol/specs.md; then
+    echo "   ✓ aux/protocol/specs.md"
 else
     echo -e "${RED}   ✗ Failed to download protocol/specs.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/protocol/blockers.md" -o protocol/blockers.md; then
-    echo "   ✓ protocol/blockers.md"
+if curl -sSL "${BASE_URL}/protocol/blockers.md" -o aux/protocol/blockers.md; then
+    echo "   ✓ aux/protocol/blockers.md"
 else
     echo -e "${RED}   ✗ Failed to download protocol/blockers.md${NC}"
     exit 1
 fi
 
-if curl -sSL "${BASE_URL}/protocol/index.md" -o protocol/index.md; then
-    echo "   ✓ protocol/index.md"
+if curl -sSL "${BASE_URL}/protocol/index.md" -o aux/protocol/index.md; then
+    echo "   ✓ aux/protocol/index.md"
 else
     echo -e "${RED}   ✗ Failed to download protocol/index.md${NC}"
     exit 1
@@ -286,17 +277,17 @@ append_otto_section() {
 **This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding.
 
 **When user says "Otto":**
-1. Read `protocol/core.md` (state machine and workflow)
+1. Read `aux/protocol/core.md` (state machine and workflow)
 2. Read `aux/project.md` (project context)
 3. Follow the state machine defined in core.md
 4. Load additional modules on-demand:
-   - Creating specs? Read `protocol/specs.md`
-   - Hit blocker? Read `protocol/blockers.md`
+   - Creating specs? Read `aux/protocol/specs.md`
+   - Hit blocker? Read `aux/protocol/blockers.md`
 5. For AI-specific guidance, see `aux/guides/ai-implementation.md`
 
 **Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
 
-**Note**: If `protocol/` directory doesn't exist (legacy setup), fall back to `aux/protocol.md`
+**Note**: If `aux/protocol/` directory doesn't exist (legacy setup), fall back to `aux/protocol.md`
 
 <!-- SPEC-PROTOCOL:END -->
 EOF

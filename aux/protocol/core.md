@@ -19,11 +19,11 @@ This document defines states, signals, and artifacts. It does NOT prescribe impl
 
 **When human says "Otto":**
 
-1. Read `protocol/core.md` (this file) - understand the state machine
+1. Read `aux/protocol/core.md` (this file) - understand the state machine
 2. Read `aux/project.md` - get project context
 3. Enter [Planning] state and ask questions
-4. When creating specs, read `protocol/specs.md` for format
-5. If blocked during implementation, read `protocol/blockers.md` for guidance
+4. When creating specs, read `aux/protocol/specs.md` for format
+5. If blocked during implementation, read `aux/protocol/blockers.md` for guidance
 
 **Key rule:** Wait for explicit human signals at each transition. Never auto-create specs, never implement before approval, never mark as done without signal.
 
@@ -89,7 +89,7 @@ Otto is a state machine with explicit transitions:
 **AI must**:
 1. Present spec summary (intent, success criteria, approach)
 2. Ask: "Does this capture what you want? Should I write the spec file?"
-3. If approved: Write spec to `aux/specs/YYYYMMDD-feature-name.md` using format from `protocol/specs.md`
+3. If approved: Write spec to `aux/specs/YYYYMMDD-feature-name.md` using format from `aux/protocol/specs.md`
 4. Confirm creation
 
 ### [Implementation]
@@ -101,7 +101,7 @@ Otto is a state machine with explicit transitions:
 1. Re-read the spec before starting
 2. Implement according to spec (address all success criteria, write tests if specified)
 3. If blocked (technical impossibility, missing prerequisite, security concern, scope explosion):
-   - See `protocol/blockers.md` for detailed handling
+   - See `aux/protocol/blockers.md` for detailed handling
    - Stop immediately, explain blocker, propose options
    - Document resolution in spec's "Revisions" section
 4. When complete: Summarize implementation and list success criteria for human to verify
@@ -128,8 +128,8 @@ Otto is tool-agnostic. Any AI that can read/write files can implement this proto
 ---
 
 **See also**:
-- `protocol/specs.md` - Spec format and success criteria guidelines
-- `protocol/blockers.md` - Blocker handling procedures
-- `spec-template.md` - Example spec format
+- `aux/protocol/specs.md` - Spec format and success criteria guidelines
+- `aux/protocol/blockers.md` - Blocker handling procedures
+- `aux/spec-template.md` - Example spec format
 
 **End of core.md**

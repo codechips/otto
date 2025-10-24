@@ -106,7 +106,7 @@ Once human provides direction:
 ---
 
 **See also**:
-- `protocol/core.md` - State machine and workflow
-- `protocol/specs.md` - How to document revisions in specs
+- `aux/protocol/core.md` - State machine and workflow
+- `aux/protocol/specs.md` - How to document revisions in specs
 
 **End of blockers.md**
