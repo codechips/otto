@@ -141,7 +141,6 @@ if [ -d "aux" ] && [ -f "aux/protocol.md" ]; then
 fi
 
 # Create directory structure
-echo "Creating directory structure..."
 mkdir -p aux/specs aux/done aux/guides aux/protocol
 
 # Download core protocol files
@@ -149,68 +148,62 @@ echo "Downloading Otto protocol files..."
 
 # Download modular protocol files
 if curl -sSL "${BASE_URL}/aux/protocol/core.md" -o aux/protocol/core.md; then
-    echo "   aux/protocol/core.md"
+    :
 else
-    echo -e "${RED}   Failed to download aux/protocol/core.md${NC}"
+    echo -e "${RED}Failed to download aux/protocol/core.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/protocol/specs.md" -o aux/protocol/specs.md; then
-    echo "   aux/protocol/specs.md"
+    :
 else
-    echo -e "${RED}   Failed to download aux/protocol/specs.md${NC}"
+    echo -e "${RED}Failed to download aux/protocol/specs.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/protocol/blockers.md" -o aux/protocol/blockers.md; then
-    echo "   aux/protocol/blockers.md"
+    :
 else
-    echo -e "${RED}   Failed to download aux/protocol/blockers.md${NC}"
+    echo -e "${RED}Failed to download aux/protocol/blockers.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/protocol/index.md" -o aux/protocol/index.md; then
-    echo "   aux/protocol/index.md"
+    :
 else
-    echo -e "${RED}   Failed to download aux/protocol/index.md${NC}"
+    echo -e "${RED}Failed to download aux/protocol/index.md${NC}"
     exit 1
 fi
 
 # Download reference files
 if curl -sSL "${BASE_URL}/aux/otto.md" -o aux/otto.md; then
-    echo "   aux/otto.md"
+    :
 else
-    echo -e "${RED}   Failed to download aux/otto.md${NC}"
+    echo -e "${RED}Failed to download aux/otto.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/spec-template.md" -o aux/spec-template.md; then
-    echo "   aux/spec-template.md"
+    :
 else
-    echo -e "${RED}   Failed to download aux/spec-template.md${NC}"
+    echo -e "${RED}Failed to download aux/spec-template.md${NC}"
     exit 1
 fi
 
 if curl -sSL "${BASE_URL}/aux/guides/ai-implementation.md" -o aux/guides/ai-implementation.md; then
-    echo "   aux/guides/ai-implementation.md"
+    :
 else
-    echo -e "${RED}   Failed to download aux/guides/ai-implementation.md${NC}"
+    echo -e "${RED}Failed to download aux/guides/ai-implementation.md${NC}"
     exit 1
 fi
 
 # Download single-file protocol.md
-if curl -sSL "${BASE_URL}/aux/protocol.md" -o aux/protocol.md; then
-    echo "   aux/protocol.md (single-file version)"
-else
-    echo -e "${YELLOW}   Single-file protocol.md not available (not critical)${NC}"
-fi
+curl -sSL "${BASE_URL}/aux/protocol.md" -o aux/protocol.md 2>/dev/null
+
+echo -e "${GREEN}Downloaded protocol files${NC}"
 
 # Check if project.md exists
-if [ -f "aux/project.md" ]; then
-    echo "   aux/project.md already exists, skipping"
-else
-    echo ""
-    echo "Creating project.md template..."
+if [ ! -f "aux/project.md" ]; then
     cat > aux/project.md << 'EOF'
 # Project Reference
 
@@ -238,10 +231,9 @@ Example:
 ## Non-Negotiables
 [Things that never get compromised]
 EOF
-    echo "   project.md (template created - please customize)"
+    echo -e "${GREEN}Created project.md template${NC}"
     echo ""
-    echo -e "${YELLOW}   IMPORTANT: The placeholder template won't provide useful context.${NC}"
-    echo -e "${YELLOW}   Say 'Otto, help me set up project.md' to fill it in properly.${NC}"
+    echo -e "${YELLOW}IMPORTANT: Say 'Otto, help me set up project.md' to fill it in properly.${NC}"
 fi
 
 # Function to append Otto section to AI config file
@@ -251,18 +243,16 @@ append_otto_section() {
 
     # Check if Otto section already exists
     if grep -q "SPEC-PROTOCOL:START" "$config_file" 2>/dev/null; then
-        echo -e "${YELLOW}   Otto section already exists in $config_name, skipping${NC}"
+        echo -e "${YELLOW}Otto section already exists in $config_name, skipping${NC}"
         return 0
     fi
 
     echo ""
-    echo -e "${GREEN}$config_name detected!${NC}"
-    echo ""
-    read -p "Would you like to append the Otto Protocol section to $config_name? (Y/n): " -n 1 -r < /dev/tty
+    read -p "Append Otto Protocol section to $config_name? (Y/n): " -n 1 -r < /dev/tty
     echo
 
     if [[ $REPLY =~ ^[Nn]$ ]]; then
-        echo "   Skipped. You can manually add the Otto section later."
+        echo "Skipped"
         return 0
     fi
 
@@ -288,7 +278,7 @@ append_otto_section() {
 <!-- SPEC-PROTOCOL:END -->
 EOF
 
-    echo -e "${GREEN}   Otto section added to $config_name${NC}"
+    echo -e "${GREEN}Added Otto section to $config_name${NC}"
 }
 
 # Function to install Claude Code slash command
@@ -298,21 +288,16 @@ install_claude_slash_command() {
 
     # Check if .claude/commands already has otto.md
     if [ -f "$otto_command_file" ]; then
-        echo -e "${YELLOW}   /otto command already exists in $project_commands_dir, skipping${NC}"
+        echo -e "${YELLOW}/otto command already exists, skipping${NC}"
         return 0
     fi
 
-    echo ""
-    echo -e "${GREEN}Claude Code detected!${NC}"
-    echo ""
-    echo "Would you like to install the /otto slash command for Claude Code?"
-    echo "This allows you to use '/otto [feature]' instead of saying 'Otto' in chat."
     echo ""
     read -p "Install /otto slash command? (Y/n): " -n 1 -r < /dev/tty
     echo
 
     if [[ $REPLY =~ ^[Nn]$ ]]; then
-        echo "   Skipped. You can say 'Otto' in chat instead."
+        echo "Skipped"
         return 0
     fi
 
@@ -321,11 +306,10 @@ install_claude_slash_command() {
 
     # Download otto.md slash command
     if curl -sSL "${BASE_URL}/.claude/commands/otto.md" -o "$otto_command_file"; then
-        echo -e "${GREEN}   /otto slash command installed${NC}"
-        echo "   You can now use: /otto [feature description]"
+        echo -e "${GREEN}Installed /otto slash command${NC}"
         return 0
     else
-        echo -e "${RED}   Failed to download slash command${NC}"
+        echo -e "${RED}Failed to download slash command${NC}"
         return 1
     fi
 }
@@ -371,7 +355,7 @@ create_config_file() {
 
 <!-- SPEC-PROTOCOL:END -->
 EOF
-    echo -e "${GREEN}   $config_name created${NC}"
+    echo -e "${GREEN}Created $config_name${NC}"
 }
 
 # Append Otto section to config files
@@ -382,7 +366,6 @@ elif [ "$CLAUDE_CODE_DETECTED" = true ]; then
     # Claude Code detected and CLAUDE.md doesn't exist - create it
     AI_CONFIG_DETECTED=true
     echo ""
-    echo -e "${GREEN}Creating CLAUDE.md with Otto Protocol section...${NC}"
     create_config_file "CLAUDE.md" "CLAUDE.md"
 fi
 
@@ -421,17 +404,16 @@ if [ "$AI_CONFIG_DETECTED" = false ]; then
             create_config_file "AGENTS.md" "AGENTS.md"
             ;;
         4)
-            echo "   Skipped. You can manually add the Otto section later."
-            echo "   See README.md for the section to add."
+            echo "Skipped"
             ;;
         *)
-            echo "   Invalid choice. Skipping config file creation."
+            echo "Invalid choice"
             ;;
     esac
 fi
 
 echo ""
-echo -e "${GREEN}Otto bootstrap complete!${NC}"
+echo -e "${GREEN}Bootstrap complete!${NC}"
 echo ""
 echo "Next steps:"
 if [ "$AI_CONFIG_DETECTED" = true ]; then
