@@ -103,8 +103,15 @@ Examples:
 
 **On entry:**
 1. Read `aux/project.md` for project context
-2. Acknowledge entry to human
-3. Begin asking questions
+2. **Check if project.md is filled out:**
+   - If it contains placeholder text like "[1-2 sentences: What is this project?]" or "[e.g., SvelteKit, Next.js, Rails]"
+   - Stop and say: "Before we start planning features, we need to set up project.md with your project details. This helps me ask better questions and make better decisions."
+   - Then say: "I can help you fill it out now. What is this project?"
+   - Guide them through each section of project.md (What This Is, Technical Stack, Architecture Patterns, etc.)
+   - Write the filled-out project.md
+   - Then say: "Great! Now we can start planning features. What would you like to work on?"
+3. Acknowledge entry to human
+4. Begin asking questions
 
 **Special intent patterns to recognize:**
 - "Otto help me setup project" or "Otto setup project" → means "set up project.md"

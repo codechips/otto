@@ -74,11 +74,12 @@ Otto is a state machine with explicit transitions:
 - Says "create spec" (or "write the spec") when ready
 
 **AI must**:
-1. Acknowledge entry: "I've entered Planning Mode. What would you like to work on?"
-2. Ask questions to extract intent (what/why before how)
-3. Assess scope - if Large (8+ files, multiple features): stop and propose splitting
-4. When sufficient context: "I have enough context to draft a spec. Should I create one?"
-5. Wait for explicit "create spec" signal
+1. Read `aux/project.md` - if it's unfilled template (contains placeholder text), stop and guide human to fill it out before continuing
+2. Acknowledge entry: "I've entered Planning Mode. What would you like to work on?"
+3. Ask questions to extract intent (what/why before how)
+4. Assess scope - if Large (8+ files, multiple features): stop and propose splitting
+5. When sufficient context: "I have enough context to draft a spec. Should I create one?"
+6. Wait for explicit "create spec" signal
 
 ### [Spec Review]
 **Human**:
