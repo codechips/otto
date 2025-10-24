@@ -93,18 +93,6 @@ remove_otto() {
     if [ -f ".claude/commands/otto.md" ]; then
         rm -f ".claude/commands/otto.md"
         echo -e "${GREEN}   ✓ Removed .claude/commands/otto.md${NC}"
-
-        # Remove .claude/commands directory if empty
-        if [ -d ".claude/commands" ] && [ -z "$(ls -A .claude/commands)" ]; then
-            rmdir .claude/commands
-            echo -e "${GREEN}   ✓ Removed empty .claude/commands/ directory${NC}"
-        fi
-
-        # Remove .claude directory if empty
-        if [ -d ".claude" ] && [ -z "$(ls -A .claude)" ]; then
-            rmdir .claude
-            echo -e "${GREEN}   ✓ Removed empty .claude/ directory${NC}"
-        fi
     else
         echo "   ⊘ .claude/commands/otto.md not found (skipped)"
     fi
