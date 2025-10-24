@@ -105,6 +105,7 @@ This will:
 - Download core files (otto.md, protocol.md, spec-template.md) to `aux/`
 - Create `project.md` template
 - Detect CLAUDE.md or AGENTS.md and offer to append Otto section automatically
+- For Claude Code users: offers to install `/otto` slash command
 
 **Then:** Say "Otto, help me set up project.md" - your AI will ask questions to fill in your project details.
 
@@ -168,6 +169,25 @@ Example:
 [Things that never get compromised]
 ```
 
+---
+
+## Claude Code Integration
+
+If you use Claude Code, bootstrap offers to install the `/otto` slash command:
+
+```bash
+/otto add user authentication
+```
+
+This provides:
+- **Faster invocation**: Type `/otto` instead of saying "Otto"
+- **Argument passing**: Feature description as command argument
+- **Same workflow**: Identical behavior to text invocation
+
+**Both methods work identically** - use whichever you prefer.
+
+---
+
 **Add to CLAUDE.md** (if using Claude Code):
 
 > **Note**: The automated bootstrap script will offer to add this automatically if it detects CLAUDE.md or AGENTS.md.
@@ -179,10 +199,13 @@ Example:
 **This project uses Otto** - a spec-driven development protocol that aligns human intent with AI implementation before coding.
 
 **When user says "Otto":**
-1. Read `aux/protocol.md` (protocol definition - the contract)
+1. Read `aux/protocol/core.md` (state machine and workflow)
 2. Read `aux/project.md` (project context)
-3. Follow the state machine and workflow defined in protocol.md
-4. For implementation guidance, see `aux/guides/ai-implementation.md`
+3. Follow the state machine defined in core.md
+4. Load additional modules on-demand:
+   - Creating specs? Read `aux/protocol/specs.md`
+   - Hit blocker? Read `aux/protocol/blockers.md`
+5. For AI-specific guidance, see `aux/guides/ai-implementation.md`
 
 **Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
 
@@ -193,13 +216,30 @@ Example:
 
 Once set up:
 
-1. **Say "Otto"** when you want to plan a feature
+1. **Say "Otto"** (or use `/otto` in Claude Code) when you want to plan a feature
 2. **AI asks questions** to extract your intent
 3. **You say "create a spec"** when ready
 4. **AI writes a spec** and waits for your approval
 5. **You approve** and AI implements
 6. **You validate** and say "mark as done"
 7. **Spec moves to `done/`** for historical reference
+
+## Uninstalling Otto
+
+To completely remove Otto from your project:
+
+```bash
+./bootstrap.sh --remove
+```
+
+This will:
+- Delete `aux/` directory (all specs and protocol files)
+- Remove `/otto` slash command if installed
+- Remove Otto sections from CLAUDE.md and AGENTS.md
+
+**⚠️ Warning**: This permanently deletes all specs including completed ones in `aux/done/`. Back up any specs you want to keep before running this command.
+
+For help: `./bootstrap.sh --help`
 
 ## Git Integration
 
@@ -217,8 +257,13 @@ Follow your team's existing branching strategy (trunk-based, gitflow, etc.). Ott
 ```
 your-project/
 ├── aux/
+│   ├── protocol/            # Modular protocol (v2.0)
+│   │   ├── core.md          # State machine (~680 tokens)
+│   │   ├── specs.md         # Spec format (~364 tokens)
+│   │   ├── blockers.md      # Blocker handling (~399 tokens)
+│   │   └── index.md         # Module overview
 │   ├── otto.md              # Entry point (what is Otto)
-│   ├── protocol.md          # Protocol definition (the contract)
+│   ├── protocol.md          # Single file version
 │   ├── project.md           # Your project context
 │   ├── spec-template.md     # Spec format reference
 │   ├── guides/              # Implementation guidance (optional)
@@ -235,7 +280,11 @@ your-project/
 | File | Audience | Purpose |
 |------|----------|---------|
 | **otto.md** | Humans | Quick reference guide with setup instructions and usage patterns |
-| **protocol.md** | AI & Humans | The core contract defining states, signals, and workflow rules |
+| **protocol/core.md** | AI & Humans | State machine and workflow (optimized for context efficiency ~680 tokens) |
+| **protocol/specs.md** | AI & Humans | Spec format and success criteria guidelines (load when creating specs ~364 tokens) |
+| **protocol/blockers.md** | AI & Humans | Blocker handling procedures (load when blocked ~399 tokens) |
+| **protocol/index.md** | AI & Humans | Module overview and navigation |
+| **protocol.md** | AI & Humans | Single file version of the protocol (all modules combined) |
 | **project.md** | AI & Humans | Project-specific context (stack, patterns, constraints) |
 | **spec-template.md** | AI & Humans | Format reference and examples for creating specs |
 | **guides/ai-implementation.md** | AI Systems | Instructions for AI assistants implementing Otto (memory management, error handling, tools). Also useful for developers building custom AI tools. |

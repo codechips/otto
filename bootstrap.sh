@@ -200,11 +200,11 @@ else
     exit 1
 fi
 
-# Download legacy protocol.md for backward compatibility
+# Download single-file protocol.md
 if curl -sSL "${BASE_URL}/aux/protocol.md" -o aux/protocol.md; then
-    echo "   ✓ aux/protocol.md (legacy compatibility)"
+    echo "   ✓ aux/protocol.md (single-file version)"
 else
-    echo -e "${YELLOW}   ⚠️  Legacy protocol.md not available (not critical)${NC}"
+    echo -e "${YELLOW}   ⚠️  Single-file protocol.md not available (not critical)${NC}"
 fi
 
 # Check if project.md exists
@@ -286,8 +286,6 @@ append_otto_section() {
 5. For AI-specific guidance, see `aux/guides/ai-implementation.md`
 
 **Most tasks don't need Otto** - only use for unclear scope, breaking changes, or multi-step features.
-
-**Note**: If `aux/protocol/` directory doesn't exist (legacy setup), fall back to `aux/protocol.md`
 
 <!-- SPEC-PROTOCOL:END -->
 EOF
